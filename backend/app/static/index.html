@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gnani Voice Gateway | Audio Caching & Semantic Acceleration</title>
+  <meta name="description" content="A voice gateway between conversational voice agents and Gnani speech services that eliminates repeated STT, LLM, and TTS calls via semantic intent routing and exact audio caching.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="dark-theme">
+  <!-- Top Global Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-mark">
+        <span class="lightning-icon">⚡</span>
+      </div>
+      <div>
+        <h1 class="brand-title">Gnani Voice Gateway</h1>
+        <p class="brand-subtitle">Semantic Response & Exact Audio Caching Layer · Kolkata Power Utility</p>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <nav class="nav-tabs">
+        <button id="tab-demo-btn" class="nav-tab active" onclick="switchTab('demo')">Split-Screen Demo</button>
+        <button id="tab-dashboard-btn" class="nav-tab" onclick="switchTab('dashboard')">Telemetry & Waterfall</button>
+        <button id="tab-budget-btn" class="nav-tab" onclick="switchTab('budget')">Budget Tracker</button>
+      </nav>
+    </div>
+
+    <div class="header-right">
+      <div class="status-pill safe-mode">
+        <span class="pulsing-dot"></span>
+        <span id="api-mode-label">Mock Mode (Safe / 0 Credits)</span>
+      </div>
+      <div class="status-pill kill-switch-pill" id="kill-switch-badge">
+        <span>Kill Switch: Off</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Global Metrics Ribbon -->
+  <section class="metrics-ribbon">
+    <div class="ribbon-card">
+      <span class="ribbon-label">Characters Avoided</span>
+      <div class="ribbon-val-group">
+        <span id="ribbon-chars-avoided" class="ribbon-value text-emerald">0</span>
+        <span class="ribbon-unit">chars</span>
+      </div>
+      <span class="ribbon-sub">Saved from paid TTS</span>
+    </div>
+
+    <div class="ribbon-card">
+      <span class="ribbon-label">TTS Syntheses Avoided</span>
+      <div class="ribbon-val-group">
+        <span id="ribbon-tts-avoided" class="ribbon-value text-indigo">0</span>
+        <span class="ribbon-unit">calls</span>
+      </div>
+      <span class="ribbon-sub">Exact audio cache hits</span>
+    </div>
+
+    <div class="ribbon-card">
+      <span class="ribbon-label">LLM Inferences Avoided</span>
+      <div class="ribbon-val-group">
+        <span id="ribbon-llm-avoided" class="ribbon-value text-violet">0</span>
+        <span class="ribbon-unit">calls</span>
+      </div>
+      <span class="ribbon-sub">Semantic intent hits</span>
+    </div>
+
+    <div class="ribbon-card">
+      <span class="ribbon-label">Median TTFA Speedup</span>
+      <div class="ribbon-val-group">
+        <span id="ribbon-speedup" class="ribbon-value text-cyan">4.8x</span>
+        <span class="ribbon-unit">faster</span>
+      </div>
+      <span class="ribbon-sub">Time to first sound</span>
+    </div>
+  </section>
+
+  <!-- VIEW 1: Split-Screen Comparison -->
+  <main id="demo-view" class="view-container active">
+    <!-- Split Screen Arena -->
+    <div class="split-arena">
+      <!-- Left Panel: Baseline Naive Agent -->
+      <div class="agent-panel baseline-panel">
+        <div class="panel-header">
+          <div class="agent-title-row">
+            <span class="agent-badge baseline-badge">Control Arm</span>
+            <h2>Naive Baseline Agent</h2>
+          </div>
+          <span class="panel-subtitle">STT → LLM → Full TTS (No Caching)</span>
+        </div>
+
+        <div class="stage-pipeline">
+          <div class="stage-step" id="base-step-stt">
+            <span class="step-num">1</span>
+            <span class="step-name">STT</span>
+            <span class="step-time" id="base-time-stt">0 ms</span>
+          </div>
+          <div class="stage-arrow">→</div>
+          <div class="stage-step" id="base-step-llm">
+            <span class="step-num">2</span>
+            <span class="step-name">LLM Think</span>
+            <span class="step-time" id="base-time-llm">0 ms</span>
+          </div>
+          <div class="stage-arrow">→</div>
+          <div class="stage-step" id="base-step-tts">
+            <span class="step-num">3</span>
+            <span class="step-name">Full TTS</span>
+            <span class="step-time" id="base-time-tts">0 ms</span>
+          </div>
+        </div>
+
+        <div class="telemetry-bar">
+          <div class="telemetry-item">
+            <span class="tel-label">Time to First Audio (TTFA):</span>
+            <span class="tel-val text-rose" id="base-ttfa">-- ms</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="tel-label">Total Turn Duration:</span>
+            <span class="tel-val" id="base-total">-- ms</span>
+          </div>
+        </div>
+
+        <div class="dialogue-box">
+          <div class="dialogue-label">Caller Utterance</div>
+          <div class="transcript-display" id="base-transcript">Awaiting caller input...</div>
+        </div>
+
+        <div class="dialogue-box response-box">
+          <div class="dialogue-label">Agent Spoken Reply (Full Raw Clip)</div>
+          <div class="response-display" id="base-response">--</div>
+        </div>
+
+        <div class="audio-player-card">
+          <div class="audio-status-row">
+            <div class="wave-animation" id="base-wave">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <span class="audio-state-text" id="base-audio-status">Idle</span>
+          </div>
+          <audio id="base-audio-elem" controls></audio>
+        </div>
+      </div>
+
+      <!-- Right Panel: Voice Gateway -->
+      <div class="agent-panel gateway-panel">
+        <div class="panel-header">
+          <div class="agent-title-row">
+            <span class="agent-badge gateway-badge">Optimized Arm</span>
+            <h2>Voice Gateway</h2>
+          </div>
+          <span class="panel-subtitle">Semantic Response + L1/L2 Audio Cache + Single-Flight</span>
+        </div>
+
+        <div class="stage-pipeline">
+          <div class="stage-step" id="gw-step-stt">
+            <span class="step-num">1</span>
+            <span class="step-name">STT</span>
+            <span class="step-time" id="gw-time-stt">0 ms</span>
+          </div>
+          <div class="stage-arrow">→</div>
+          <div class="stage-step" id="gw-step-route">
+            <span class="step-num">2</span>
+            <span class="step-name">Router</span>
+            <span class="step-time" id="gw-time-route">0 ms</span>
+          </div>
+          <div class="stage-arrow">→</div>
+          <div class="stage-step" id="gw-step-response">
+            <span class="step-num">3</span>
+            <span class="step-name">Response Layer</span>
+            <span class="step-time" id="gw-time-response">0 ms</span>
+          </div>
+          <div class="stage-arrow">→</div>
+          <div class="stage-step" id="gw-step-cache">
+            <span class="step-num">4</span>
+            <span class="step-name">Audio Cache</span>
+            <span class="step-time" id="gw-time-cache">0 ms</span>
+          </div>
+        </div>
+
+        <div class="telemetry-bar gateway-tel">
+          <div class="telemetry-item">
+            <span class="tel-label">Time to First Audio (TTFA):</span>
+            <span class="tel-val text-emerald highlight-glow" id="gw-ttfa">-- ms</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="tel-label">Route Decision:</span>
+            <span class="route-badge" id="gw-decision">--</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="tel-label">Similarity Score:</span>
+            <span class="tel-val text-indigo" id="gw-sim">--</span>
+          </div>
+        </div>
+
+        <div class="dialogue-box">
+          <div class="dialogue-label">Caller Utterance</div>
+          <div class="transcript-display" id="gw-transcript">Awaiting caller input...</div>
+        </div>
+
+        <div class="dialogue-box response-box">
+          <div class="dialogue-label">Agent Spoken Reply (Streamed by Clauses)</div>
+          <div class="response-display" id="gw-response">--</div>
+          <div class="clause-tags-row" id="gw-clauses-container"></div>
+        </div>
+
+        <div class="audio-player-card">
+          <div class="audio-status-row">
+            <div class="wave-animation active-green" id="gw-wave">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <span class="audio-state-text" id="gw-audio-status">Idle</span>
+          </div>
+          <audio id="gw-audio-elem" controls></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Question Presets Dock -->
+    <div class="preset-chips-container">
+      <span class="chips-label">Quick Test Scenarios:</span>
+      <button class="chip-btn" onclick="selectPreset('আমাদের এলাকায় বিদ্যুৎ চলে গেছে কখন আসবে?', 'bn-IN')">
+        ⚡ Outage FAQ (Bengali) <span class="chip-tag tag-hit">High Hit</span>
+      </button>
+      <button class="chip-btn" onclick="selectPreset('बिजली बिल ऑनलाइन कैसे भरें?', 'hi-IN')">
+        💳 Bill Payment (Hindi) <span class="chip-tag tag-hit">High Hit</span>
+      </button>
+      <button class="chip-btn" onclick="selectPreset('Current chole geche kokhon asbe?', 'hi-en')">
+        🗣️ Power Outage (Benglish) <span class="chip-tag tag-hit">Hit</span>
+      </button>
+      <button class="chip-btn" onclick="selectPreset('আমার চলতি মাসের বিদ্যুৎ বিল কত এসেছে?', 'bn-IN')">
+        👤 Personal Bill Query <span class="chip-tag tag-personal">Live LLM</span>
+      </button>
+      <button class="chip-btn" onclick="selectPreset('রাস্তায় তার ছিঁড়ে পড়ে গিয়ে স্পার্কিং হচ্ছে!', 'bn-IN')">
+        ⚠️ Wire Spark Danger <span class="chip-tag tag-hit">Hit</span>
+      </button>
+      <button class="chip-btn" onclick="selectPreset('আমি এই বিল নিয়ে আদালতে যাব এবং legal dispute করব।', 'bn-IN')">
+        ⚖️ Dispute Escalation <span class="chip-tag tag-heavy">Heavy LLM</span>
+      </button>
+    </div>
+
+    <!-- Bottom Input Controller Dock -->
+    <footer class="interaction-dock">
+      <div class="lang-selector-group">
+        <label for="language-select">Language:</label>
+        <select id="language-select" class="custom-select">
+          <option value="bn-IN" selected>বাংলা (Bengali)</option>
+          <option value="hi-IN">हिन्दी (Hindi)</option>
+          <option value="hi-en">Benglish (Code-mixed)</option>
+        </select>
+      </div>
+
+      <div class="input-form-container">
+        <input type="text" id="user-input-text" class="main-text-input" placeholder="Type a customer query or speak below..." value="আমাদের এলাকায় বিদ্যুৎ চলে গেছে কখন আসবে?">
+        <button id="send-btn" class="primary-btn" onclick="sendTurn()">
+          <span>Run Turn</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+
+      <div class="mic-controls">
+        <button id="ptt-btn" class="mic-btn" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording()" ontouchend="stopRecording()">
+          <span class="mic-icon">🎙️</span>
+          <span id="ptt-label">Push-to-Talk</span>
+        </button>
+      </div>
+    </footer>
+  </main>
+
+  <!-- VIEW 2: Metrics Dashboard -->
+  <main id="dashboard-view" class="view-container">
+    <div class="dashboard-grid">
+      <!-- Latency Waterfall Comparison -->
+      <div class="dash-card col-span-2">
+        <div class="card-header">
+          <h3>Latency Waterfall Breakdown (Median p50)</h3>
+          <span class="badge-accent">Live Telemetry</span>
+        </div>
+        <div class="waterfall-comparison">
+          <!-- Baseline Bar -->
+          <div class="waterfall-arm">
+            <div class="arm-label">Naive Baseline (Uncached)</div>
+            <div class="waterfall-bar-container">
+              <div class="bar-seg seg-stt" style="width: 15%" title="STT: 18ms">STT 18ms</div>
+              <div class="bar-seg seg-llm" style="width: 35%" title="LLM: 32ms">LLM 32ms</div>
+              <div class="bar-seg seg-tts" style="width: 50%" title="TTS: 216ms">TTS 216ms</div>
+            </div>
+            <div class="total-latency-text">Total Turn: <strong id="wf-base-total">266 ms</strong></div>
+          </div>
+
+          <!-- Gateway Bar -->
+          <div class="waterfall-arm">
+            <div class="arm-label">Voice Gateway (Optimized)</div>
+            <div class="waterfall-bar-container">
+              <div class="bar-seg seg-stt" style="width: 15%" title="STT: 18ms">STT 18ms</div>
+              <div class="bar-seg seg-router" style="width: 8%" title="Router: 5ms">Router 5ms</div>
+              <div class="bar-seg seg-cache-hit" style="width: 25%" title="Cached TTFA: 28ms">TTFA 28ms</div>
+            </div>
+            <div class="total-latency-text">Total Turn: <strong id="wf-gw-total" class="text-emerald">52 ms (80% faster)</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hit Rate Radial Card -->
+      <div class="dash-card">
+        <div class="card-header">
+          <h3>Cache Efficiency</h3>
+        </div>
+        <div class="hit-gauge-content">
+          <div class="gauge-number" id="dash-hit-rate">74.4%</div>
+          <div class="gauge-label">Audio Clause Hit Rate</div>
+          <p class="gauge-desc">Calculated across Zipfian FAQ workload distributions.</p>
+        </div>
+      </div>
+
+      <!-- Recent Turns Table -->
+      <div class="dash-card col-span-3">
+        <div class="card-header">
+          <h3>Recent Turn Telemetry Logs</h3>
+          <button class="secondary-btn" onclick="fetchRecentTurns()">Refresh Logs</button>
+        </div>
+        <div class="table-wrapper">
+          <table class="metrics-table">
+            <thead>
+              <tr>
+                <th>Arm</th>
+                <th>Language</th>
+                <th>Route Decision</th>
+                <th>Similarity</th>
+                <th>TTFA</th>
+                <th>Total Latency</th>
+                <th>Clauses</th>
+                <th>TTS Syntheses</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="turns-table-body">
+              <tr>
+                <td colspan="9" class="text-center">Loading recent turn logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW 3: Budget Tracker -->
+  <main id="budget-view" class="view-container">
+    <div class="budget-header-box">
+      <h2>Credit Budget & Hard Caps Enforcement</h2>
+      <p>Tracking allocation across 5,000 total hackathon credits (converted at conservative 300 chars/credit to ensure caps are never breached).</p>
+    </div>
+
+    <div class="budget-cards-grid" id="budget-cards-container">
+      <!-- Populated dynamically via /api/budget -->
+    </div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

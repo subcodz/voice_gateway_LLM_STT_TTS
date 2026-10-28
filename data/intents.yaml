@@ -1,0 +1,250 @@
+intents:
+  # 1. Power Cut / Outage (Non-Personal, Whitelisted)
+  - id: "power_outage"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "আপনার এলাকায় বিদ্যুৎ সরবরাহ সাময়িকভাবে বিঘ্নিত হয়েছে। আজ সন্ধ্যা ৬টার মধ্যে লাইন স্বাভাবিক হয়ে যাবে।"
+        examples:
+          - "আমাদের এখানে বিদ্যুৎ চলে গেছে"
+          - "কখন কারেন্ট আসবে?"
+          - "বিদ্যুৎ বিভ্রাটের কারণ কি?"
+          - "কারেন্ট নেই কতক্ষণ বন্ধ থাকবে?"
+      hi-IN:
+        canonical_reply: "आपके क्षेत्र में बिजली आपूर्ति बाधित है। आज शाम ६ बजे तक बिजली बहाल कर दी जाएगी।"
+        examples:
+          - "हमारे यहाँ बिजली चली गई है"
+          - "लाइट कब आएगी?"
+          - "बिजली गुल होने का क्या कारण है?"
+          - "कब तक बिजली वापस आएगी?"
+      hi-en:
+        canonical_reply: "Apnar area te power supply interrupted ache. Aaj sondhe 6 ta te power restore hoye jabe."
+        examples:
+          - "Current chole geche kokhon asbe?"
+          - "Power cut problem hoyeche"
+          - "Line kokhon thik hobe?"
+
+  # 2. Bill Payment Modes (Non-Personal, Whitelisted)
+  - id: "bill_payment_modes"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "আপনি আমাদের ওয়েবসাইট, ইউপিআই অ্যাপ অথবা যেকোনো গ্রাহক সেবা কেন্দ্রে বিল জমা দিতে পারেন।"
+        examples:
+          - "বিল কীভাবে পেমেন্ট করব?"
+          - "অনলাইনে বিল দেওয়ার উপায় কি?"
+          - "কোন কোন অ্যাপ দিয়ে বিল দেওয়া যায়?"
+      hi-IN:
+        canonical_reply: "आप हमारी वेबसाइट, यूपीआई ऐप्स या किसी भी ग्राहक सेवा केंद्र पर बिल जमा कर सकते हैं।"
+        examples:
+          - "बिल कैसे भरें?"
+          - "ऑनलाइन बिल पेमेंट कैसे करें?"
+          - "क्या गूगल पे से बिल भर सकते हैं?"
+      hi-en:
+        canonical_reply: "Apni online portal, UPI apps ba nearby customer care centre theke bill pay korte paren."
+        examples:
+          - "Bill payment kivabe korbo?"
+          - "UPI diye payment kora jabe ki?"
+          - "Online bill payment steps bolo"
+
+  # 3. New Connection Procedure (Non-Personal, Whitelisted)
+  - id: "new_connection"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "নতুন বিদ্যুৎ সংযোগের জন্য পরিচয়পত্র এবং ঠিকানার প্রমাণপত্র সহ আমাদের পোর্টালে ফর্ম জমা দিন।"
+        examples:
+          - "নতুন মিটারের জন্য কীভাবে আবেদন করব?"
+          - "নতুন কানেকশন নিতে কি কি কাগজ লাগবে?"
+      hi-IN:
+        canonical_reply: "नए बिजली कनेक्शन के लिए पहचान पत्र और पते के प्रमाण के साथ हमारे पोर्टल पर आवेदन करें।"
+        examples:
+          - "नया बिजली कनेक्शन कैसे लें?"
+          - "नए मीटर के लिए क्या दस्तावेज चाहिए?"
+      hi-en:
+        canonical_reply: "New connection er jonno identity proof ar address proof niye online portal e apply korun."
+        examples:
+          - "New meter application kivabe korbo?"
+          - "Notun connection nite chai"
+
+  # 4. Office Hours (Non-Personal, Whitelisted)
+  - id: "office_hours"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "আমাদের সকল আঞ্চলিক অফিস সোমবার থেকে শনিবার সকাল ১০টা থেকে বিকেল ৫টা পর্যন্ত খোলা থাকে।"
+        examples:
+          - "অফিস কখন খোলা থাকে?"
+          - "হেল্পডেস্ক কখন পাওয়া যাবে?"
+      hi-IN:
+        canonical_reply: "हमारे सभी क्षेत्रीय कार्यालय सोमवार से शनिवार सुबह १० बजे से शाम ५ बजे तक खुले रहते हैं।"
+        examples:
+          - "बिजली दफ्तर कब खुलता है?"
+          - "ऑफिस का समय क्या है?"
+      hi-en:
+        canonical_reply: "Amader regional office Monday theke Saturday shokal 10 ta theke 5 ta porjonto open thake."
+        examples:
+          - "Office timing ki?"
+          - "Customer care kokhon khola thake?"
+
+  # 5. Safety Emergency / Wire Sparking (Non-Personal, Whitelisted)
+  - id: "safety_emergency"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "জরুরি বিপদের ক্ষেত্রে ছেঁড়া তার থেকে দূরে থাকুন। জরুরি উদ্ধারকারী দল অবিলম্বে রওনা হচ্ছে।"
+        examples:
+          - "রাস্তায় তার ছিঁড়ে পড়ে গেছে"
+          - "ট্রান্সফর্মারে আগুন লেগেছে"
+          - "স্পার্কিং হচ্ছে খুব বিপদ"
+      hi-IN:
+        canonical_reply: "आपातकालीन स्थिति में टूटे हुए तारों से दूर रहें। हमारी आपातकालीन टीम तुरंत रवाना हो रही है।"
+        examples:
+          - "तार टूट कर गिर गया है"
+          - "ट्रांसफार्मर में आग लग गई है"
+          - "खंभे से चिंगारी निकल रही है"
+      hi-en:
+        canonical_reply: "Emergency danger e wire theke safe distance maintain korun. Rescue team ekhuni dispatch hochhe."
+        examples:
+          - "Electric wire chhire geche"
+          - "Transformer e fire hazard hoyeche"
+
+  # 6. Meter Reading Schedule (Non-Personal, Whitelisted)
+  - id: "meter_reading_schedule"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "প্রতি মাসের ১ থেকে ৭ তারিখের মধ্যে মিটার রিডার আপনার বাড়িতে এসে রিডিং সংগ্রহ করবেন।"
+        examples:
+          - "মিটার রিডিং কখন নেওয়া হয়?"
+          - "মিটার চেকিং কোন তারিখে হয়?"
+      hi-IN:
+        canonical_reply: "प्रत्येक महीने की १ से ७ तारीख के बीच मीटर रीडर आपके घर आकर रीडिंग दर्ज करते हैं।"
+        examples:
+          - "मीटर रीडिंग कब ली जाती है?"
+          - "मीटर वाले किस दिन आते हैं?"
+      hi-en:
+        canonical_reply: "Every month er 1 theke 7 tarikh er moddhe meter reader reading record korte asben."
+        examples:
+          - "Meter reading schedule ki?"
+          - "Kobe reading collect hobe?"
+
+  # 7. Solar Rooftop Scheme (Non-Personal, Whitelisted)
+  - id: "solar_scheme"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "ছাদে সৌরবিদ্যুৎ প্রকল্পের অধীনে সরকার চল্লিশ শতাংশ পর্যন্ত ভর্তুকি প্রদান করছে। পোর্টালে বিস্তারিত দেখুন।"
+        examples:
+          - "সোলার প্যানেলের সরকারি স্কিম কি?"
+          - "সোলার বসালে কত সাবসিডি পাব?"
+      hi-IN:
+        canonical_reply: "रूफटॉप सोलर योजना के तहत सरकार चालीस प्रतिशत तक की सब्सिडी दे रही है। पोर्टल पर विवरण देखें।"
+        examples:
+          - "सोलर पैनल योजना क्या है?"
+          - "रूफटॉप सोलर पर कितनी सब्सिडी है?"
+      hi-en:
+        canonical_reply: "Rooftop solar scheme e government up to 40% subsidy dichhe. Portal e details check korun."
+        examples:
+          - "Solar subsidy scheme details ki?"
+          - "Chhat e solar panel lagate chai"
+
+  # 8. Voltage Fluctuation (Non-Personal, Whitelisted)
+  - id: "voltage_issue"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "ভোল্টেজ ওঠানামার সমস্যা সমাধানে স্থানীয় সাবস্টেশনে কাজ চলছে। খুব শীঘ্রই স্থিতিশীল হবে।"
+        examples:
+          - "ভোল্টেজ খুব কম আলো জ্বলছে না"
+          - "ভোল্টেজ ফ্ল্যাকচুয়েশন হচ্ছে"
+      hi-IN:
+        canonical_reply: "वोल्टेज उतार-चढ़ाव की समस्या ठीक करने के लिए सबस्टेशन पर काम जारी है। जल्द ही वोल्टेज सामान्य होगा।"
+        examples:
+          - "लो वोल्टेज की समस्या है"
+          - "वोल्टेज बहुत कम आ रहा है"
+      hi-en:
+        canonical_reply: "Voltage fluctuation issue solve korte substation e work cholche. Khub taratari normal hobe."
+        examples:
+          - "Voltage low ache fan cholche na"
+          - "Heavy voltage drop hoyeche"
+
+  # 9. Energy Saving Tips (Non-Personal, Whitelisted)
+  - id: "energy_saving"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "বিদ্যুৎ বাঁচাতে এসি ২৪ ডিগ্রিতে চালান এবং অপ্রয়োজনীয় আলো ও ফ্যান বন্ধ রাখুন।"
+        examples:
+          - "বিদ্যুৎ বিল কমানোর উপায় কি?"
+          - "বিদ্যুৎ সাশ্রয় করব কীভাবে?"
+      hi-IN:
+        canonical_reply: "बिजली बचाने के लिए एसी २४ डिग्री पर चलाएं और अनावश्यक लाइट व पंखे बंद रखें।"
+        examples:
+          - "बिजली बिल कैसे कम करें?"
+          - "बिजली बचाने के उपाय बताएं"
+      hi-en:
+        canonical_reply: "Electricity save korte AC 24 degree te set korun ebong unused appliances switch off rakhun."
+        examples:
+          - "Bill kom korar tips din"
+          - "How to save electricity?"
+
+  # 10. Customer Support Contact (Non-Personal, Whitelisted)
+  - id: "support_contact"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "আমাদের টোল-ফ্রি হেল্পলাইন নম্বর ১৯১২। আপনি চব্বিশ ঘণ্টাই যেকোনো সমস্যায় যোগাযোগ করতে পারেন।"
+        examples:
+          - "কাস্টমার কেয়ার নম্বর কত?"
+          - "হেল্পলাইন ফোন নাম্বার চাই"
+      hi-IN:
+        canonical_reply: "हमारा टोल-फ्री हेल्पलाइन नंबर १९१२ है। आप चौबीसों घंटे किसी भी समय संपर्क कर सकते हैं।"
+        examples:
+          - "कस्टमर केयर नंबर क्या है?"
+          - "हेल्पलाइन नंबर दीजिए"
+      hi-en:
+        canonical_reply: "Amader toll-free helpline number holo 1912. 24x7 call korte paren."
+        examples:
+          - "Customer care number ki?"
+          - "Helpline phone number chai"
+
+  # 11. Bill Due Amount Inquiry (PERSONALIZED - Never Cached in Semantic Cache)
+  - id: "bill_due_inquiry"
+    personal: true
+    languages:
+      bn-IN:
+        canonical_reply: "আপনার বর্তমান বকেয়া বিল ₹১,২৪০ এবং শেষ তারিখ ১৫ নভেম্বর।"
+        examples:
+          - "আমার বকেয়া বিল কত?"
+          - "এই মাসে আমার কত টাকা বিল এসেছে?"
+      hi-IN:
+        canonical_reply: "आपका वर्तमान बकाया बिल ₹१,२४० है और अंतिम तिथि १५ नवंबर है।"
+        examples:
+          - "मेरा बकाया बिल कितना है?"
+          - "इस महीने मेरा कितना बिल आया है?"
+      hi-en:
+        canonical_reply: "Apnar current outstanding bill ₹1,240 ebong due date 15th November."
+        examples:
+          - "Amar bill koto esheche?"
+          - "Outstanding amount check kore bolun"
+
+  # 12. Complaint Status Inquiry (PERSONALIZED - Never Cached in Semantic Cache)
+  - id: "complaint_status"
+    personal: true
+    languages:
+      bn-IN:
+        canonical_reply: "আপনার অভিযোগ নম্বর সি-৮৯২ এর কাজ চলছে। টেকনিশিয়ান পৌঁছানোর আনুমানিক সময় ৩০ মিনিট।"
+        examples:
+          - "আমার দায়ের করা অভিযোগের কি হলো?"
+          - "কমপ্লেন স্ট্যাটাস চেক করতে চাই"
+      hi-IN:
+        canonical_reply: "आपकी शिकायत संख्या सी-८९२ पर कार्य जारी है। तकनीशियन के ३० मिनट में पहुंचने का अनुमान है।"
+        examples:
+          - "मेरी शिकायत का क्या स्टेटस है?"
+          - "कंप्लेंट का क्या हुआ?"
+      hi-en:
+        canonical_reply: "Apnar complaint status C-892 under progress. Technician 30 mins e reach korbe."
+        examples:
+          - "Amar complaint number ta check korun"
+          - "Ki holo amar complaint er?"

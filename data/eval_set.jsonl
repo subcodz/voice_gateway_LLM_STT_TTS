@@ -1,0 +1,79 @@
+{"text": "আমাদের এলাকায় বিদ্যুৎ চলে গেছে কখন আসবে?", "intent": "power_outage", "lang": "bn-IN", "is_personal": false, "notes": "exact outage query"}
+{"text": "কারেন্ট নেই কতক্ষণ বন্ধ থাকবে?", "intent": "power_outage", "lang": "bn-IN", "is_personal": false, "notes": "paraphrase"}
+{"text": "বিদ্যুৎ বিভ্রাটের কোনো খবর আছে কি?", "intent": "power_outage", "lang": "bn-IN", "is_personal": false, "notes": "formal outage query"}
+{"text": "রাস্তার আলো আর ঘরের ফ্যান সব বন্ধ হয়ে গেছে", "intent": "power_outage", "lang": "bn-IN", "is_personal": false, "notes": "colloquial outage query"}
+{"text": "আজকে কি লোডশেডিং হবে?", "intent": "power_outage", "lang": "bn-IN", "is_personal": false, "notes": "load shedding query"}
+{"text": "हमारे यहाँ बिजली चली गई है कब तक आएगी?", "intent": "power_outage", "lang": "hi-IN", "is_personal": false, "notes": "hindi outage"}
+{"text": "लाइट कब आएगी भाई बहुत गर्मी लग रही है", "intent": "power_outage", "lang": "hi-IN", "is_personal": false, "notes": "hindi colloquial"}
+{"text": "क्या हमारे मोहल्ले में बिजली का काम चल रहा है?", "intent": "power_outage", "lang": "hi-IN", "is_personal": false, "notes": "hindi maintenance query"}
+{"text": "बिजली गुल होने का समय कब तक है?", "intent": "power_outage", "lang": "hi-IN", "is_personal": false, "notes": "hindi formal"}
+{"text": "Current chole geche kokhon asbe?", "intent": "power_outage", "lang": "hi-en", "is_personal": false, "notes": "benglish outage"}
+{"text": "Power cut problem hoyeche area te", "intent": "power_outage", "lang": "hi-en", "is_personal": false, "notes": "benglish paraphrase"}
+{"text": "Line kokhon restore hobe?", "intent": "power_outage", "lang": "hi-en", "is_personal": false, "notes": "benglish restore"}
+{"text": "Electricity off ache kon shomoy thik hobe?", "intent": "power_outage", "lang": "hi-en", "is_personal": false, "notes": "benglish outage"}
+{"text": "বিল কীভাবে পেমেন্ট করব?", "intent": "bill_payment_modes", "lang": "bn-IN", "is_personal": false, "notes": "bill payment mode"}
+{"text": "অনলাইনে বিল দেওয়ার উপায় কি কি?", "intent": "bill_payment_modes", "lang": "bn-IN", "is_personal": false, "notes": "online bill mode"}
+{"text": "কোন কোন অ্যাপ দিয়ে বিদ্যুৎ বিল জমা দেওয়া যায়?", "intent": "bill_payment_modes", "lang": "bn-IN", "is_personal": false, "notes": "app payment"}
+{"text": "আমি কি ডেবিট কার্ড দিয়ে বিল মেটাতে পারি?", "intent": "bill_payment_modes", "lang": "bn-IN", "is_personal": false, "notes": "card payment"}
+{"text": "বিল কাউন্টার কোথায় অবস্থিত?", "intent": "bill_payment_modes", "lang": "bn-IN", "is_personal": false, "notes": "counter query"}
+{"text": "बिजली बिल ऑनलाइन कैसे भरें?", "intent": "bill_payment_modes", "lang": "hi-IN", "is_personal": false, "notes": "hindi bill mode"}
+{"text": "क्या गूगल पे या फोनपे से बिल भुगतान हो सकता है?", "intent": "bill_payment_modes", "lang": "hi-IN", "is_personal": false, "notes": "hindi upi mode"}
+{"text": "बिल जमा करने के क्या-क्या तरीके हैं?", "intent": "bill_payment_modes", "lang": "hi-IN", "is_personal": false, "notes": "hindi payment channels"}
+{"text": "Bill payment kivabe korbo?", "intent": "bill_payment_modes", "lang": "hi-en", "is_personal": false, "notes": "benglish payment"}
+{"text": "UPI ba net banking e pay kora jabe?", "intent": "bill_payment_modes", "lang": "hi-en", "is_personal": false, "notes": "benglish payment methods"}
+{"text": "Online payment portal er link din", "intent": "bill_payment_modes", "lang": "hi-en", "is_personal": false, "notes": "benglish portal link"}
+{"text": "নতুন মিটারের জন্য কীভাবে আবেদন করব?", "intent": "new_connection", "lang": "bn-IN", "is_personal": false, "notes": "new meter application"}
+{"text": "বাড়িতে নতুন বিদ্যুৎ সংযোগ নিতে কি কি কাগজ লাগবে?", "intent": "new_connection", "lang": "bn-IN", "is_personal": false, "notes": "documents for connection"}
+{"text": "নতুন কানেকশনের খরচ কত?", "intent": "new_connection", "lang": "bn-IN", "is_personal": false, "notes": "cost for connection"}
+{"text": "नया बिजली कनेक्शन कैसे प्राप्त करें?", "intent": "new_connection", "lang": "hi-IN", "is_personal": false, "notes": "hindi new meter"}
+{"text": "नया मीटर लगाने के लिए क्या दस्तावेज लगेंगे?", "intent": "new_connection", "lang": "hi-IN", "is_personal": false, "notes": "hindi documents"}
+{"text": "New connection nite chai procedure ki?", "intent": "new_connection", "lang": "hi-en", "is_personal": false, "notes": "benglish new meter"}
+{"text": "Electric meter installation er form kothay pabo?", "intent": "new_connection", "lang": "hi-en", "is_personal": false, "notes": "benglish form"}
+{"text": "বিদ্যুৎ অফিস কখন খোলা থাকে?", "intent": "office_hours", "lang": "bn-IN", "is_personal": false, "notes": "office timing"}
+{"text": "শনিবার কি আপনাদের অফিস খোলা থাকে?", "intent": "office_hours", "lang": "bn-IN", "is_personal": false, "notes": "saturday hours"}
+{"text": "গ্রাহক সেবা কেন্দ্রের সময়সূচি কি?", "intent": "office_hours", "lang": "bn-IN", "is_personal": false, "notes": "service center timing"}
+{"text": "बिजली दफ्तर खुलने और बंद होने का समय क्या है?", "intent": "office_hours", "lang": "hi-IN", "is_personal": false, "notes": "hindi office timing"}
+{"text": "क्या रविवार को ऑफिस खुलता है?", "intent": "office_hours", "lang": "hi-IN", "is_personal": false, "notes": "hindi sunday query"}
+{"text": "Office timing ki ar helpline kokhon pabo?", "intent": "office_hours", "lang": "hi-en", "is_personal": false, "notes": "benglish timing"}
+{"text": "Customer care working hours bolun", "intent": "office_hours", "lang": "hi-en", "is_personal": false, "notes": "benglish working hours"}
+{"text": "রাস্তায় তার ছিঁড়ে পড়ে গিয়ে স্পার্কিং হচ্ছে!", "intent": "safety_emergency", "lang": "bn-IN", "is_personal": false, "notes": "emergency spark"}
+{"text": "ট্রান্সফর্মারে ধোঁয়া বেরোচ্ছে আগুন লাগতে পারে", "intent": "safety_emergency", "lang": "bn-IN", "is_personal": false, "notes": "emergency fire"}
+{"text": "খুঁটিতে শর্ট সার্কিট হচ্ছে তাড়াতাড়ি লোক পাঠান", "intent": "safety_emergency", "lang": "bn-IN", "is_personal": false, "notes": "emergency short circuit"}
+{"text": "बिजली का तार टूट कर सड़क पर गिरा है!", "intent": "safety_emergency", "lang": "hi-IN", "is_personal": false, "notes": "hindi emergency wire"}
+{"text": "ट्रांसफार्मर में आग लग गई है तुरंत मदद भेजें", "intent": "safety_emergency", "lang": "hi-IN", "is_personal": false, "notes": "hindi emergency transformer"}
+{"text": "Electric wire chhire geche danger ache ekhuni asun", "intent": "safety_emergency", "lang": "hi-en", "is_personal": false, "notes": "benglish emergency wire"}
+{"text": "Sparks flying from transformer please dispatch rescue team", "intent": "safety_emergency", "lang": "hi-en", "is_personal": false, "notes": "benglish emergency spark"}
+{"text": "প্রতি মাসে মিটার রিডিং কোন তারিখে নেওয়া হয়?", "intent": "meter_reading_schedule", "lang": "bn-IN", "is_personal": false, "notes": "reading date"}
+{"text": "মিটার রিডার কবে আসবে?", "intent": "meter_reading_schedule", "lang": "bn-IN", "is_personal": false, "notes": "reader arrival"}
+{"text": "मीटर रीडिंग किस तारीख को दर्ज की जाती है?", "intent": "meter_reading_schedule", "lang": "hi-IN", "is_personal": false, "notes": "hindi reading date"}
+{"text": "Meter reading schedule ki kon din asbe?", "intent": "meter_reading_schedule", "lang": "hi-en", "is_personal": false, "notes": "benglish reading schedule"}
+{"text": "সোলার প্যানেলের জন্য সরকারি ভর্তুকি কত?", "intent": "solar_scheme", "lang": "bn-IN", "is_personal": false, "notes": "solar subsidy"}
+{"text": "বাড়ির ছাদে সৌরবিদ্যুৎ প্রকল্প কীভাবে চালু করব?", "intent": "solar_scheme", "lang": "bn-IN", "is_personal": false, "notes": "solar installation"}
+{"text": "रूफटॉप सोलर पैनल योजना की जानकारी दीजिए", "intent": "solar_scheme", "lang": "hi-IN", "is_personal": false, "notes": "hindi solar scheme"}
+{"text": "Rooftop solar subsidy scheme details ki?", "intent": "solar_scheme", "lang": "hi-en", "is_personal": false, "notes": "benglish solar scheme"}
+{"text": "ভোল্টেজ খুব ওঠানামা করছে টিভি ফ্রিজ নষ্ট হতে পারে", "intent": "voltage_issue", "lang": "bn-IN", "is_personal": false, "notes": "voltage fluctuation"}
+{"text": "ভোল্টেজ ড্রপ হয়েছে আলো টিমটিম করে জ্বলছে", "intent": "voltage_issue", "lang": "bn-IN", "is_personal": false, "notes": "low voltage"}
+{"text": "वोल्टेज बहुत कम आ रहा है उपकरण नहीं चल रहे", "intent": "voltage_issue", "lang": "hi-IN", "is_personal": false, "notes": "hindi low voltage"}
+{"text": "Voltage low ache fan cholche na AC off", "intent": "voltage_issue", "lang": "hi-en", "is_personal": false, "notes": "benglish low voltage"}
+{"text": "বিদ্যুৎ অপচয় কমানোর কোনো পরামর্শ আছে কি?", "intent": "energy_saving", "lang": "bn-IN", "is_personal": false, "notes": "saving advice"}
+{"text": "बिजली का बिल कम कैसे करें कोई उपाय बताइए", "intent": "energy_saving", "lang": "hi-IN", "is_personal": false, "notes": "hindi energy saving"}
+{"text": "Electricity bill kom korar tips din", "intent": "energy_saving", "lang": "hi-en", "is_personal": false, "notes": "benglish bill reduction tips"}
+{"text": "কাস্টমার কেয়ার হেল্পলাইন নম্বর কত?", "intent": "support_contact", "lang": "bn-IN", "is_personal": false, "notes": "helpline number"}
+{"text": "हमारा टोल-फ्री कस्टमर केयर नंबर क्या है?", "intent": "support_contact", "lang": "hi-IN", "is_personal": false, "notes": "hindi helpline number"}
+{"text": "Toll free customer care phone number ki?", "intent": "support_contact", "lang": "hi-en", "is_personal": false, "notes": "benglish helpline phone"}
+{"text": "আমার চলতি মাসের বিদ্যুৎ বিল কত এসেছে?", "intent": "bill_due_inquiry", "lang": "bn-IN", "is_personal": true, "notes": "PERSONAL: current bill inquiry"}
+{"text": "আমার মিটার নম্বর ৯৮৭৪ এর বকেয়া কত?", "intent": "bill_due_inquiry", "lang": "bn-IN", "is_personal": true, "notes": "PERSONAL: meter specific bill"}
+{"text": "আমার বিল পেমেন্টের লাস্ট ডেট কবে?", "intent": "bill_due_inquiry", "lang": "bn-IN", "is_personal": true, "notes": "PERSONAL: bill due date"}
+{"text": "मेरा इस महीने का बकाया बिजली बिल कितना है?", "intent": "bill_due_inquiry", "lang": "hi-IN", "is_personal": true, "notes": "PERSONAL: hindi bill inquiry"}
+{"text": "उपभोक्ता संख्या ५४३२ का कितना बिल बाकी है?", "intent": "bill_due_inquiry", "lang": "hi-IN", "is_personal": true, "notes": "PERSONAL: consumer specific bill"}
+{"text": "Amar bill koto esheche check kore bolun", "intent": "bill_due_inquiry", "lang": "hi-en", "is_personal": true, "notes": "PERSONAL: benglish bill query"}
+{"text": "Consumer account 4455 er outstanding amount koto?", "intent": "bill_due_inquiry", "lang": "hi-en", "is_personal": true, "notes": "PERSONAL: benglish account bill"}
+{"text": "আমার দায়ের করা কমপ্লেন সি-৮৯২ এর স্ট্যাটাস কি?", "intent": "complaint_status", "lang": "bn-IN", "is_personal": true, "notes": "PERSONAL: complaint status"}
+{"text": "কালকে যে কমপ্লেন করেছিলাম তার কোনো আপডেট আছে?", "intent": "complaint_status", "lang": "bn-IN", "is_personal": true, "notes": "PERSONAL: yesterday complaint"}
+{"text": "मेरी शिकायत संख्या ८८९ का स्टेटस बताएं", "intent": "complaint_status", "lang": "hi-IN", "is_personal": true, "notes": "PERSONAL: hindi complaint status"}
+{"text": "Complaint ticket C-892 er ki obostha?", "intent": "complaint_status", "lang": "hi-en", "is_personal": true, "notes": "PERSONAL: benglish complaint status"}
+{"text": "আমার বিল পরিশোধের রসিদ ডাউনলোড হচ্ছে না", "intent": "bill_payment_modes", "lang": "bn-IN", "is_personal": false, "notes": "NEAR MISS: receipt vs payment modes"}
+{"text": "বিল জমা দিলে কি সঙ্গে সঙ্গে লাইন চালু হয়?", "intent": "power_outage", "lang": "bn-IN", "is_personal": false, "notes": "NEAR MISS: bill payment vs power restoration"}
+{"text": "কারেন্ট চলে গেলে কি বিলের টাকা কম আসে?", "intent": "power_outage", "lang": "bn-IN", "is_personal": false, "notes": "NEAR MISS: outage vs bill calculation"}
+{"text": "बिजली बिल नहीं भरा तो क्या तुरंत लाइन काट देंगे?", "intent": "power_outage", "lang": "hi-IN", "is_personal": false, "notes": "NEAR MISS: disconnection vs power outage"}
+{"text": "Bill pay korechi kintu current tokhono asheni", "intent": "power_outage", "lang": "hi-en", "is_personal": false, "notes": "NEAR MISS: paid bill but outage persists"}
