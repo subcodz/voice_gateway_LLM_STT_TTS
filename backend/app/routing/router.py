@@ -23,6 +23,36 @@ class RouteDecision(BaseModel):
     reason: str = ""
 
 
+def detect_language(text: str, fallback: str = "hi-IN") -> str:
+    """Detects primary language from Unicode script ranges and romanized Latin patterns."""
+    if not text or not text.strip():
+        return fallback
+    bengali = 0
+    devanagari = 0
+    latin = 0
+    total = 0
+    for ch in text:
+        cp = ord(ch)
+        if 0x0980 <= cp <= 0x09FF:
+            bengali += 1
+            total += 1
+        elif 0x0900 <= cp <= 0x097F:
+            devanagari += 1
+            total += 1
+        elif (0x0041 <= cp <= 0x005A) or (0x0061 <= cp <= 0x007A):
+            latin += 1
+            total += 1
+    if total == 0:
+        return fallback
+    if bengali / total > 0.35:
+        return "bn-IN"
+    if devanagari / total > 0.35:
+        return "hi-IN"
+    if latin / total > 0.5:
+        return "hi-en"
+    return fallback
+
+
 # Key phrases indicating personalized, account-specific inquiries
 PERSONAL_KEYWORDS = [
     "আমার বিল", "আমার বকেয়া", "मेरा बिल", "बकाया बिल", "my bill",
@@ -52,6 +82,7 @@ class Router:
         """Determines the routing path for an incoming query."""
         clean_text = text.strip()
         lower_text = clean_text.lower()
+        effective_lang = detect_language(clean_text, fallback=lang)
 
         # 1. Check for personal account-specific queries (never semantic-cached)
         for kw in PERSONAL_KEYWORDS:
@@ -82,7 +113,9 @@ class Router:
                 )
 
         # 3. Check Semantic Cache for whitelisted non-personal intent match
-        match = self.semantic_cache.lookup(clean_text, lang)
+        match = self.semantic_cache.lookup(clean_text, effective_lang)
+        if not match and effective_lang != lang:
+            match = self.semantic_cache.lookup(clean_text, lang)
         if match:
             intent_id, canonical_reply, score = match
             # Verify intent is not personal in catalog

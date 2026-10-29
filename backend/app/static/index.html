@@ -7,8 +7,8 @@
   <meta name="description" content="A voice gateway between conversational voice agents and Gnani speech services that eliminates repeated STT, LLM, and TTS calls via semantic intent routing and exact audio caching.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css?v=20261029b">
 </head>
 <body class="dark-theme">
   <!-- Top Global Header -->
@@ -19,7 +19,7 @@
       </div>
       <div>
         <h1 class="brand-title">Gnani Voice Gateway</h1>
-        <p class="brand-subtitle">Semantic Response & Exact Audio Caching Layer · Kolkata Power Utility</p>
+        <p class="brand-subtitle">Semantic Response & Exact Audio Caching Layer</p>
       </div>
     </div>
 
@@ -47,7 +47,7 @@
     <div class="ribbon-card">
       <span class="ribbon-label">Characters Avoided</span>
       <div class="ribbon-val-group">
-        <span id="ribbon-chars-avoided" class="ribbon-value text-emerald">0</span>
+        <span id="ribbon-chars-avoided" class="ribbon-value">0</span>
         <span class="ribbon-unit">chars</span>
       </div>
       <span class="ribbon-sub">Saved from paid TTS</span>
@@ -56,7 +56,7 @@
     <div class="ribbon-card">
       <span class="ribbon-label">TTS Syntheses Avoided</span>
       <div class="ribbon-val-group">
-        <span id="ribbon-tts-avoided" class="ribbon-value text-indigo">0</span>
+        <span id="ribbon-tts-avoided" class="ribbon-value">0</span>
         <span class="ribbon-unit">calls</span>
       </div>
       <span class="ribbon-sub">Exact audio cache hits</span>
@@ -65,7 +65,7 @@
     <div class="ribbon-card">
       <span class="ribbon-label">LLM Inferences Avoided</span>
       <div class="ribbon-val-group">
-        <span id="ribbon-llm-avoided" class="ribbon-value text-violet">0</span>
+        <span id="ribbon-llm-avoided" class="ribbon-value">0</span>
         <span class="ribbon-unit">calls</span>
       </div>
       <span class="ribbon-sub">Semantic intent hits</span>
@@ -74,7 +74,7 @@
     <div class="ribbon-card">
       <span class="ribbon-label">Median TTFA Speedup</span>
       <div class="ribbon-val-group">
-        <span id="ribbon-speedup" class="ribbon-value text-cyan">4.8x</span>
+        <span id="ribbon-speedup" class="ribbon-value">4.8x</span>
         <span class="ribbon-unit">faster</span>
       </div>
       <span class="ribbon-sub">Time to first sound</span>
@@ -118,7 +118,7 @@
         <div class="telemetry-bar">
           <div class="telemetry-item">
             <span class="tel-label">Time to First Audio (TTFA):</span>
-            <span class="tel-val text-rose" id="base-ttfa">-- ms</span>
+            <span class="tel-val" id="base-ttfa">-- ms</span>
           </div>
           <div class="telemetry-item">
             <span class="tel-label">Total Turn Duration:</span>
@@ -128,7 +128,7 @@
 
         <div class="dialogue-box">
           <div class="dialogue-label">Caller Utterance</div>
-          <div class="transcript-display" id="base-transcript">Awaiting caller input...</div>
+          <div class="transcript-display" id="base-transcript">--</div>
         </div>
 
         <div class="dialogue-box response-box">
@@ -186,7 +186,7 @@
         <div class="telemetry-bar gateway-tel">
           <div class="telemetry-item">
             <span class="tel-label">Time to First Audio (TTFA):</span>
-            <span class="tel-val text-emerald highlight-glow" id="gw-ttfa">-- ms</span>
+            <span class="tel-val" id="gw-ttfa">-- ms</span>
           </div>
           <div class="telemetry-item">
             <span class="tel-label">Route Decision:</span>
@@ -194,13 +194,13 @@
           </div>
           <div class="telemetry-item">
             <span class="tel-label">Similarity Score:</span>
-            <span class="tel-val text-indigo" id="gw-sim">--</span>
+            <span class="tel-val" id="gw-sim">--</span>
           </div>
         </div>
 
         <div class="dialogue-box">
           <div class="dialogue-label">Caller Utterance</div>
-          <div class="transcript-display" id="gw-transcript">Awaiting caller input...</div>
+          <div class="transcript-display" id="gw-transcript">--</div>
         </div>
 
         <div class="dialogue-box response-box">
@@ -211,7 +211,7 @@
 
         <div class="audio-player-card">
           <div class="audio-status-row">
-            <div class="wave-animation active-green" id="gw-wave">
+            <div class="wave-animation" id="gw-wave">
               <span></span><span></span><span></span><span></span><span></span>
             </div>
             <span class="audio-state-text" id="gw-audio-status">Idle</span>
@@ -221,44 +221,12 @@
       </div>
     </div>
 
-    <!-- Quick Question Presets Dock -->
-    <div class="preset-chips-container">
-      <span class="chips-label">Quick Test Scenarios:</span>
-      <button class="chip-btn" onclick="selectPreset('আমাদের এলাকায় বিদ্যুৎ চলে গেছে কখন আসবে?', 'bn-IN')">
-        ⚡ Outage FAQ (Bengali) <span class="chip-tag tag-hit">High Hit</span>
-      </button>
-      <button class="chip-btn" onclick="selectPreset('बिजली बिल ऑनलाइन कैसे भरें?', 'hi-IN')">
-        💳 Bill Payment (Hindi) <span class="chip-tag tag-hit">High Hit</span>
-      </button>
-      <button class="chip-btn" onclick="selectPreset('Current chole geche kokhon asbe?', 'hi-en')">
-        🗣️ Power Outage (Benglish) <span class="chip-tag tag-hit">Hit</span>
-      </button>
-      <button class="chip-btn" onclick="selectPreset('আমার চলতি মাসের বিদ্যুৎ বিল কত এসেছে?', 'bn-IN')">
-        👤 Personal Bill Query <span class="chip-tag tag-personal">Live LLM</span>
-      </button>
-      <button class="chip-btn" onclick="selectPreset('রাস্তায় তার ছিঁড়ে পড়ে গিয়ে স্পার্কিং হচ্ছে!', 'bn-IN')">
-        ⚠️ Wire Spark Danger <span class="chip-tag tag-hit">Hit</span>
-      </button>
-      <button class="chip-btn" onclick="selectPreset('আমি এই বিল নিয়ে আদালতে যাব এবং legal dispute করব।', 'bn-IN')">
-        ⚖️ Dispute Escalation <span class="chip-tag tag-heavy">Heavy LLM</span>
-      </button>
-    </div>
-
-    <!-- Bottom Input Controller Dock -->
+    <!-- Bottom Interaction Dock: Freeform Type or Speak (No Language Selector, Clean Slate) -->
     <footer class="interaction-dock">
-      <div class="lang-selector-group">
-        <label for="language-select">Language:</label>
-        <select id="language-select" class="custom-select">
-          <option value="bn-IN" selected>বাংলা (Bengali)</option>
-          <option value="hi-IN">हिन्दी (Hindi)</option>
-          <option value="hi-en">Benglish (Code-mixed)</option>
-        </select>
-      </div>
-
       <div class="input-form-container">
-        <input type="text" id="user-input-text" class="main-text-input" placeholder="Type a customer query or speak below..." value="আমাদের এলাকায় বিদ্যুৎ চলে গেছে কখন আসবে?">
+        <input type="text" id="user-input-text" class="main-text-input" placeholder="" value="">
         <button id="send-btn" class="primary-btn" onclick="sendTurn()">
-          <span>Run Turn</span>
+          <span>Send</span>
           <span class="btn-arrow">→</span>
         </button>
       </div>
@@ -362,6 +330,6 @@
     </div>
   </main>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=20261029b"></script>
 </body>
 </html>

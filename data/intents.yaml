@@ -1,4 +1,77 @@
 intents:
+  # 0. Conversational Greetings & General FAQs (Non-Personal, Whitelisted)
+  - id: "greeting"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "নমস্কার! আমি আপনার ভয়েস অ্যাসিস্ট্যান্ট। বলুন আমি আপনাকে কীভাবে সাহায্য করতে পারি?"
+        examples:
+          - "নমস্কার"
+          - "হ্যালো"
+          - "হাই"
+          - "হ্যালো কেমন আছেন"
+          - "শুভ সকাল"
+      hi-IN:
+        canonical_reply: "नमस्ते! मैं आपका वॉइस असिस्टेंट हूँ। बताइए मैं आपकी क्या मदद कर सकता हूँ?"
+        examples:
+          - "नमस्ते"
+          - "हेलो"
+          - "हाय"
+          - "सुप्रभात"
+          - "हेलो कैसे हो"
+      hi-en:
+        canonical_reply: "Hello! Ami apnar voice assistant. Bolun kivabe sahajjo korte pari?"
+        examples:
+          - "Hello"
+          - "Hi"
+          - "Hey"
+          - "Nomoshkar"
+          - "Kemon acho"
+
+  - id: "how_are_you"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "আমি খুব ভালো আছি, ধন্যবাদ! আপনি কেমন আছেন? বলুন কীভাবে সাহায্য করব।"
+        examples:
+          - "কেমন আছেন?"
+          - "তুমি কেমন আছো?"
+          - "সব ঠিক আছে তো?"
+      hi-IN:
+        canonical_reply: "मैं बिल्कुल ठीक हूँ, धन्यवाद! आप कैसे हैं? बताइए आज क्या मदद चाहिए।"
+        examples:
+          - "आप कैसे हैं?"
+          - "क्या हाल चाल है?"
+          - "सब ठीक है?"
+      hi-en:
+        canonical_reply: "Ami khub bhalo achi, thank you! Apni kemon achen?"
+        examples:
+          - "How are you?"
+          - "Kemon achen apni?"
+          - "Sab thik ache to?"
+
+  - id: "thanks"
+    personal: false
+    languages:
+      bn-IN:
+        canonical_reply: "আপনাকে অনেক ধন্যবাদ! আপনার দিনটি খুব সুন্দর কাটুক।"
+        examples:
+          - "ধন্যবাদ"
+          - "থ্যাঙ্ক ইউ"
+          - "অনেক ধন্যবাদ"
+      hi-IN:
+        canonical_reply: "आपका बहुत-बहुत धन्यवाद! आपका दिन शुभ हो।"
+        examples:
+          - "धन्यवाद"
+          - "शुक्रिया"
+          - "थैंक यू"
+      hi-en:
+        canonical_reply: "Onek dhonyobad! Din ti bhalo katuk."
+        examples:
+          - "Thank you"
+          - "Thanks"
+          - "Dhonyobad"
+
   # 1. Power Cut / Outage (Non-Personal, Whitelisted)
   - id: "power_outage"
     personal: false

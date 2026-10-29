@@ -17,7 +17,7 @@ from app.cache.singleflight import SingleFlight
 from app.cache.tee import tee_stream
 from app.metrics.recorder import TurnRecorder
 from app.metrics.store import MetricsStore
-from app.routing.router import Router
+from app.routing.router import Router, detect_language
 from app.routing.splitter import split_into_clauses
 
 
@@ -84,7 +84,8 @@ class GatewayPipeline:
 
         # Step 2: Route query
         t0 = time.perf_counter()
-        route_decision = self.router.route(transcript, lang=lang)
+        effective_lang = detect_language(transcript, fallback=lang) if transcript else lang
+        route_decision = self.router.route(transcript, lang=effective_lang)
         route_ms = round((time.perf_counter() - t0) * 1000)
         recorder.record_route(
             duration_ms=route_ms,
@@ -116,7 +117,7 @@ class GatewayPipeline:
                 try:
                     reply_text = await self.llm_adapter.reply(history, tier="heavy")
                 except Exception:
-                    reply_text = "ধন্যবাদ, আমি আপনার অনুরোধ প্রক্রিয়া করছি।"
+                    reply_text = "Thank you, I am processing your request."
             llm_ms = round((time.perf_counter() - t0) * 1000)
             recorder.record_llm(llm_ms, calls=1)
 
@@ -127,7 +128,9 @@ class GatewayPipeline:
         if not clauses:
             clauses = [reply_text]
 
-        voice = self.voice_map.get(lang, "Kirra")
+        # Use turn language, fallback to script detection if unknown
+        target_lang = lang or detect_language(reply_text, fallback="hi-IN")
+        voice = self.voice_map.get(target_lang) or ("Kirra" if "bn" in target_lang else "Nalini" if "hi" in target_lang else "Poorvi")
 
         # Step 5 & 6: Audio Cache lookup, single-flight synthesis, and tee streaming per clause
         for clause in clauses:
@@ -135,7 +138,7 @@ class GatewayPipeline:
                 text=clause,
                 voice=voice,
                 model=self.model,
-                language=lang,
+                language=target_lang,
                 sample_rate=self.sample_rate
             )
             key = audio_key(req, version_tag=self.version_tag)

@@ -240,29 +240,56 @@ async def get_intents():
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    """Real-time WebSocket endpoint for conversational audio turns."""
+    """Real-time WebSocket endpoint for conversational audio turns.
+
+    Protocol:
+      - Text-only turn: client sends one JSON message with {arm, session_id, lang, text, run_id}.
+      - Audio turn:     client sends a JSON metadata message with {arm, session_id, lang, run_id, has_audio: true}
+                        immediately followed by a binary message containing the 16 kHz mono PCM WAV.
+    """
+    import logging
+    log = logging.getLogger("ws")
+
     await websocket.accept()
     client_ip = websocket.client.host if websocket.client else "127.0.0.1"
 
+    # Per-connection pending audio metadata (set by a JSON frame with has_audio=true)
+    pending_audio_meta = None
+
     try:
         while True:
-            # Receive either JSON metadata or binary audio
             message = await websocket.receive()
+
             if "text" in message and message["text"]:
                 payload = json.loads(message["text"])
+
+                # Check if this is an audio metadata preamble
+                if payload.get("has_audio"):
+                    # Store metadata and wait for the next binary frame
+                    pending_audio_meta = {
+                        "arm": payload.get("arm", "gateway"),
+                        "session_id": payload.get("session_id", f"sess_{client_ip}"),
+                        "lang": payload.get("lang", "hi-IN"),
+                        "run_id": payload.get("run_id", "ptt_demo"),
+                    }
+                    log.info("Audio metadata received, waiting for binary WAV (arm=%s, lang=%s)",
+                             pending_audio_meta["arm"], pending_audio_meta["lang"])
+                    continue
+
+                # Regular text turn
                 arm = payload.get("arm", "gateway")
                 session_id = payload.get("session_id", "default_sess")
-                lang = payload.get("lang", "bn-IN")
+                lang = payload.get("lang", "hi-IN")
                 text = payload.get("text", "")
                 run_id = payload.get("run_id", "demo")
 
-                # Track guardrails for live typed text
                 if text:
                     check_guardrails(client_ip, session_id, len(text))
                     state.session_spend[session_id] += len(text)
                     state.ip_daily_spend[client_ip]["chars"] += len(text)
 
                 pipeline = state.gateway_pipeline if arm == "gateway" else state.baseline_pipeline
+                log.info("Text turn: arm=%s, lang=%s, len=%d", arm, lang, len(text))
 
                 async for item in pipeline.execute_turn(
                     session_id=session_id,
@@ -276,19 +303,30 @@ async def websocket_endpoint(websocket: WebSocket):
                         await websocket.send_json(item)
 
             elif "bytes" in message and message["bytes"]:
-                # Push-to-talk 16kHz mono PCM WAV frame
                 wav_bytes = message["bytes"]
-                arm = "gateway"
-                session_id = f"sess_{client_ip}"
-                lang = "bn-IN"
+                log.info("Binary WAV received: %d bytes", len(wav_bytes))
+
+                # Use pending audio metadata if available, otherwise sensible defaults
+                if pending_audio_meta:
+                    arm = pending_audio_meta["arm"]
+                    session_id = pending_audio_meta["session_id"]
+                    lang = pending_audio_meta["lang"]
+                    run_id = pending_audio_meta["run_id"]
+                    pending_audio_meta = None  # consumed
+                else:
+                    arm = "gateway"
+                    session_id = f"sess_{client_ip}"
+                    lang = "hi-IN"
+                    run_id = "ptt_demo"
 
                 pipeline = state.gateway_pipeline if arm == "gateway" else state.baseline_pipeline
+                log.info("Audio turn: arm=%s, lang=%s, wav_size=%d", arm, lang, len(wav_bytes))
 
                 async for item in pipeline.execute_turn(
                     session_id=session_id,
                     lang=lang,
                     wav_input=wav_bytes,
-                    run_id="ptt_demo"
+                    run_id=run_id
                 ):
                     if isinstance(item, bytes):
                         await websocket.send_bytes(item)
@@ -296,8 +334,9 @@ async def websocket_endpoint(websocket: WebSocket):
                         await websocket.send_json(item)
 
     except WebSocketDisconnect:
-        pass
+        log.info("Client disconnected: %s", client_ip)
     except Exception as e:
+        log.error("WebSocket error for %s: %s", client_ip, e, exc_info=True)
         try:
             await websocket.send_json({"type": "error", "message": str(e)})
         except Exception:

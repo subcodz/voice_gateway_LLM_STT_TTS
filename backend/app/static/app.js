@@ -60,19 +60,42 @@ function switchTab(tabId) {
   }
 }
 
-// Preset Chip Selection
-function selectPreset(text, lang) {
-  document.getElementById("user-input-text").value = text;
-  document.getElementById("language-select").value = lang;
-  sendTurn();
+// Automatic Language Detection (Bengali / Devanagari Hindi / Latin Romanized)
+function detectLanguage(text) {
+  if (!text || !text.trim()) return 'hi-IN';
+
+  let bengaliCount = 0;
+  let devanagariCount = 0;
+  let latinCount = 0;
+  let totalAlpha = 0;
+
+  for (const ch of text) {
+    const code = ch.codePointAt(0);
+    if (code >= 0x0980 && code <= 0x09FF) { bengaliCount++; totalAlpha++; }
+    else if (code >= 0x0900 && code <= 0x097F) { devanagariCount++; totalAlpha++; }
+    else if ((code >= 0x0041 && code <= 0x005A) || (code >= 0x0061 && code <= 0x007A)) { latinCount++; totalAlpha++; }
+  }
+
+  if (totalAlpha === 0) return 'hi-IN';
+
+  const bengaliRatio = bengaliCount / totalAlpha;
+  const devanagariRatio = devanagariCount / totalAlpha;
+  const latinRatio = latinCount / totalAlpha;
+
+  if (bengaliRatio > 0.4) return 'bn-IN';
+  if (devanagariRatio > 0.4) return 'hi-IN';
+  if (latinRatio > 0.6) return 'hi-en';
+  return 'hi-IN';
 }
 
 // Send Turn to Both Baseline and Gateway Simultaneously
 async function sendTurn() {
-  const textInput = document.getElementById("user-input-text").value.trim();
-  const lang = document.getElementById("language-select").value;
+  const inputElem = document.getElementById("user-input-text");
+  if (!inputElem) return;
+  const textInput = inputElem.value.trim();
 
   if (!textInput) return;
+  const lang = detectLanguage(textInput);
 
   // Reset UI states
   resetPanelUI();
@@ -111,7 +134,7 @@ function resetPanelUI() {
 }
 
 // Run Naive Baseline Agent
-async function executeBaselineTurn(text, lang) {
+async function executeBaselineTurn(text, lang, wavData = null) {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const baseWs = new WebSocket(`${protocol}//${window.location.host}/ws`);
   baseWs.binaryType = "arraybuffer";
@@ -119,22 +142,45 @@ async function executeBaselineTurn(text, lang) {
   const audioChunks = [];
   const t0 = performance.now();
 
-  document.getElementById("base-step-llm").classList.add("active-step");
+  if (wavData) {
+    document.getElementById("base-step-stt").classList.add("active-step");
+  } else {
+    document.getElementById("base-step-llm").classList.add("active-step");
+  }
 
   baseWs.onopen = () => {
-    baseWs.send(JSON.stringify({
-      arm: "baseline",
-      session_id: "demo_sess",
-      lang: lang,
-      text: text,
-      run_id: "demo_live"
-    }));
+    if (wavData) {
+      baseWs.send(JSON.stringify({
+        arm: "baseline",
+        session_id: "demo_sess",
+        lang: lang || "hi-IN",
+        run_id: "demo_live",
+        has_audio: true
+      }));
+      baseWs.send(wavData);
+    } else {
+      baseWs.send(JSON.stringify({
+        arm: "baseline",
+        session_id: "demo_sess",
+        lang: lang,
+        text: text,
+        run_id: "demo_live"
+      }));
+    }
   };
 
   baseWs.onmessage = (event) => {
     if (typeof event.data === "string") {
       const data = JSON.parse(event.data);
-      if (data.type === "reply_text") {
+      if (data.type === "transcript") {
+        document.getElementById("base-step-stt").classList.remove("active-step");
+        document.getElementById("base-step-llm").classList.add("active-step");
+        document.getElementById("base-transcript").innerText = data.text;
+        const inputElem = document.getElementById("user-input-text");
+        if (inputElem && !inputElem.value) {
+          inputElem.value = data.text;
+        }
+      } else if (data.type === "reply_text") {
         document.getElementById("base-response").innerText = data.text;
         document.getElementById("base-step-llm").classList.remove("active-step");
         document.getElementById("base-step-tts").classList.add("active-step");
@@ -156,7 +202,7 @@ async function executeBaselineTurn(text, lang) {
 }
 
 // Run Optimized Voice Gateway
-async function executeGatewayTurn(text, lang) {
+async function executeGatewayTurn(text, lang, wavData = null) {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const gwWs = new WebSocket(`${protocol}//${window.location.host}/ws`);
   gwWs.binaryType = "arraybuffer";
@@ -164,22 +210,41 @@ async function executeGatewayTurn(text, lang) {
   const audioChunks = [];
   let firstChunkReceived = false;
 
-  document.getElementById("gw-step-route").classList.add("active-step");
+  if (wavData) {
+    document.getElementById("gw-step-stt").classList.add("active-step");
+  } else {
+    document.getElementById("gw-step-route").classList.add("active-step");
+  }
 
   gwWs.onopen = () => {
-    gwWs.send(JSON.stringify({
-      arm: "gateway",
-      session_id: "demo_sess",
-      lang: lang,
-      text: text,
-      run_id: "demo_live"
-    }));
+    if (wavData) {
+      gwWs.send(JSON.stringify({
+        arm: "gateway",
+        session_id: "demo_sess",
+        lang: lang || "hi-IN",
+        run_id: "demo_live",
+        has_audio: true
+      }));
+      gwWs.send(wavData);
+    } else {
+      gwWs.send(JSON.stringify({
+        arm: "gateway",
+        session_id: "demo_sess",
+        lang: lang,
+        text: text,
+        run_id: "demo_live"
+      }));
+    }
   };
 
   gwWs.onmessage = (event) => {
     if (typeof event.data === "string") {
       const data = JSON.parse(event.data);
-      if (data.type === "route") {
+      if (data.type === "transcript") {
+        document.getElementById("gw-step-stt").classList.remove("active-step");
+        document.getElementById("gw-step-route").classList.add("active-step");
+        document.getElementById("gw-transcript").innerText = data.text;
+      } else if (data.type === "route") {
         document.getElementById("gw-step-route").classList.remove("active-step");
         document.getElementById("gw-step-response").classList.add("active-step");
         document.getElementById("gw-decision").innerText = data.decision;
@@ -200,7 +265,7 @@ async function executeGatewayTurn(text, lang) {
         // Render clause hit tags
         renderClauseTags(m);
 
-        // Update accumulated savings counters
+        // Update accumulated savings meters
         updateSavingsMeters(m);
 
         assembleAndPlayAudio(audioChunks, "gw-audio-elem", "gw-wave");
@@ -307,19 +372,29 @@ function stopRecording() {
   isRecording = false;
 
   const btn = document.getElementById("ptt-btn");
-  btn.classList.remove("recording");
-  document.getElementById("ptt-label").innerText = "Push-to-Talk";
+  if (btn) btn.classList.remove("recording");
+  const pttLabel = document.getElementById("ptt-label");
+  if (pttLabel) pttLabel.innerText = "Push-to-Talk";
 
   if (scriptProcessor) scriptProcessor.disconnect();
   if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
 
   // Downsample to 16,000 Hz and encode 16-bit PCM WAV
-  const wavBytes = encodeWav16kHz(recordedPcmChunks, audioContext ? audioContext.sampleRate : 48000);
-  if (wavBytes && ws && ws.readyState === WebSocket.OPEN) {
+  const sampleRate = audioContext ? audioContext.sampleRate : 48000;
+  const wavBytes = encodeWav16kHz(recordedPcmChunks, sampleRate);
+
+  if (audioContext && audioContext.state !== "closed") {
+    try { audioContext.close().catch(() => {}); } catch (_) {}
+  }
+
+  if (wavBytes && wavBytes.byteLength > 44) {
     resetPanelUI();
     document.getElementById("base-transcript").innerText = "Transcribing spoken audio...";
     document.getElementById("gw-transcript").innerText = "Transcribing spoken audio...";
-    ws.send(wavBytes);
+
+    // Send audio to BOTH arms concurrently
+    executeBaselineTurn("", "hi-IN", wavBytes);
+    executeGatewayTurn("", "hi-IN", wavBytes);
   }
 }
 
@@ -419,7 +494,7 @@ async function fetchRecentTurns() {
         <td>${t.lang}</td>
         <td><span class="route-badge">${t.route || "--"}</span></td>
         <td>${t.sim_score > 0 ? (t.sim_score * 100).toFixed(1) + "%" : "--"}</td>
-        <td class="${isGw ? "text-emerald" : "text-rose"}">${t.ttfa_ms} ms</td>
+        <td>${t.ttfa_ms} ms</td>
         <td>${t.total_ms} ms</td>
         <td>${t.clause_hits}/${t.clauses} hits</td>
         <td>${t.tts_calls}</td>
@@ -464,6 +539,18 @@ async function fetchBudget() {
     console.error("Error fetching budget:", err);
   }
 }
+
+// Bind Enter key on text input
+window.addEventListener("DOMContentLoaded", () => {
+  const inputElem = document.getElementById("user-input-text");
+  if (inputElem) {
+    inputElem.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        sendTurn();
+      }
+    });
+  }
+});
 
 // Connect on load
 window.addEventListener("DOMContentLoaded", () => {

@@ -3,12 +3,59 @@
 Why this module exists:
 Centralizes all runtime parameters, API keys, audio presets, model configurations,
 and budget limits in one validated object. This guarantees that adapters, pipelines,
-and tests read consistent settings and safely default to offline mock mode to prevent
-accidental credit exhaustion on third-party APIs.
+and tests read consistent settings and safely default to offline mock mode when keys
+are missing to prevent accidental credit exhaustion on third-party APIs.
 """
 
 import os
+from pathlib import Path
 from pydantic import BaseModel, Field
+
+
+def _load_env_file():
+    """Finds and loads the .env file from common search paths."""
+    search_dirs = [
+        Path.cwd(),
+        Path(__file__).resolve().parent,
+        Path(__file__).resolve().parent.parent,
+        Path(__file__).resolve().parent.parent.parent,
+    ]
+    env_file = None
+    for d in search_dirs:
+        candidate = d / ".env"
+        if candidate.is_file():
+            env_file = candidate
+            break
+
+    if not env_file:
+        return
+
+    # Try python-dotenv first
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(dotenv_path=env_file, override=False)
+        return
+    except ImportError:
+        pass
+
+    # Built-in fallback parser if python-dotenv is not installed
+    try:
+        with open(env_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k = k.strip()
+                v = v.split("#")[0].strip().strip('"').strip("'")
+                if k not in os.environ:
+                    os.environ[k] = v
+    except Exception:
+        pass
+
+
+# Run env file discovery immediately on import
+_load_env_file()
 
 
 class GatewayConfig(BaseModel):
@@ -23,6 +70,8 @@ class GatewayConfig(BaseModel):
         "hi-IN": "Nalini",
         "bn-IN": "Kirra",
         "hi-en": "Poorvi",
+        "en-IN": "Poorvi",
+        "default": "Poorvi",
     })
 
     # Groq configuration
@@ -51,12 +100,13 @@ class GatewayConfig(BaseModel):
     max_chars_per_ip_day: int = 1500
     kill_switch: bool = Field(default_factory=lambda: os.getenv("KILL_SWITCH", "0") in ("1", "true", "True"))
 
-    # Safety switch: Mock mode ensures tests and local dev NEVER call paid endpoints
-    mock_apis: bool = Field(default_factory=lambda: os.getenv("MOCK_APIS", "1") in ("1", "true", "True"))
+    # Safety switch: If MOCK_APIS is explicitly set in .env / env, respect it; otherwise default to 0 if keys exist
+    mock_apis: bool = Field(default_factory=lambda: os.getenv("MOCK_APIS", "0" if os.getenv("GNANI_API_KEY") else "1") in ("1", "true", "True"))
 
     # Semantic Cache Threshold
     semantic_threshold: float = 0.82
 
 
 def get_config() -> GatewayConfig:
+    _load_env_file()
     return GatewayConfig()

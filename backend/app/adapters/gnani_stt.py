@@ -33,6 +33,11 @@ class GnaniSttAdapter:
 
     async def transcribe(self, wav: bytes, lang: str = "bn-IN") -> Transcript:
         """Transcribes PCM WAV audio via Gnani STT v3."""
+        # Normalize language code for Gnani STT API
+        stt_lang = lang
+        if stt_lang in ("hi-en", "default"):
+            stt_lang = "hi-IN"
+
         # Calculate duration in minutes for budget accounting (approx 300 chars equiv)
         approx_chars = max(10, int(len(wav) / (16000 * 2) * 20))
         if self.budget_tracker:
@@ -41,7 +46,7 @@ class GnaniSttAdapter:
         url = f"{self.base_url}/stt/v3"
         headers = {"X-API-Key-ID": self.api_key}
         files = {"audio_file": ("caller_audio.wav", wav, "audio/wav")}
-        data = {"language_code": lang, "format": "transcribe"}
+        data = {"language_code": stt_lang, "format": "transcribe"}
 
         try:
             r = await self.client.post(url, headers=headers, files=files, data=data, timeout=60.0)
@@ -50,12 +55,35 @@ class GnaniSttAdapter:
             r.raise_for_status()
 
             body = r.json()
-            # Handle possible response schemas from Gnani STT
+            # Handle all possible response schemas from Gnani STT
             text = ""
             if isinstance(body, dict):
-                text = body.get("transcript") or body.get("text") or body.get("result", "")
-                if not text and "data" in body and isinstance(body["data"], dict):
-                    text = body["data"].get("transcript", "")
+                text = (
+                    body.get("transcript")
+                    or body.get("text")
+                    or body.get("result")
+                    or body.get("asr_output")
+                    or body.get("transcription")
+                    or ""
+                )
+                if not text and "data" in body:
+                    data_field = body["data"]
+                    if isinstance(data_field, dict):
+                        text = (
+                            data_field.get("transcript")
+                            or data_field.get("text")
+                            or data_field.get("asr_output")
+                            or data_field.get("transcription")
+                            or ""
+                        )
+                    elif isinstance(data_field, list) and len(data_field) > 0:
+                        first = data_field[0]
+                        if isinstance(first, dict):
+                            text = first.get("transcript") or first.get("text") or first.get("asr_output") or ""
+                        elif isinstance(first, str):
+                            text = first
+                    elif isinstance(data_field, str):
+                        text = data_field
             elif isinstance(body, str):
                 text = body
 

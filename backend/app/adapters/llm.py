@@ -15,10 +15,10 @@ from app.adapters.models import Msg
 
 
 SYSTEM_PROMPT = (
-    "You are a helpline agent for a fictional Kolkata power utility; "
-    "answer in the caller's language (Hindi, Bengali or Hinglish/Benglish); "
-    "at most two short sentences; plain text only, no markdown, no emoji, "
-    "no symbols; never invent account data."
+    "You are a helpful, friendly, and concise conversational voice assistant. "
+    "Answer naturally in whatever language the user speaks (Hindi, Bengali, English, Hinglish, etc.). "
+    "Keep your response to at most two short, vocalizable sentences. "
+    "Output plain text only — never use markdown, bullet points, asterisks, symbols, or emojis."
 )
 
 
@@ -107,7 +107,7 @@ class LlmAdapter:
         data = r.json()
         candidates = data.get("candidates", [])
         if not candidates:
-            return "ধন্যবাদ, আমি আপনার অনুরোধ প্রক্রিয়া করছি।"
+            return "Thank you, I am processing your request."
         return candidates[0]["content"]["parts"][0]["text"]
 
     async def reply(self, history: List[Msg], tier: str = "fast") -> str:

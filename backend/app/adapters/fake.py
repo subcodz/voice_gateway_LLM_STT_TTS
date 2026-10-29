@@ -121,7 +121,7 @@ class FakeTtsAdapter:
 class FakeSttAdapter:
     """Mock STT adapter simulating speech-to-text transcription."""
 
-    def __init__(self, canned_text: str = "আমার বিদ্যুৎ বিল কত?", delay_ms: int = 15):
+    def __init__(self, canned_text: str = "নমস্কার, কেমন আছেন?", delay_ms: int = 15):
         self.canned_text = canned_text
         self.delay_ms = delay_ms
         self.calls = 0
@@ -152,9 +152,15 @@ class FakeLlmAdapter:
 
         # Context-aware synthetic replies
         last_msg = history[-1].content if history else ""
-        if "বিল" in last_msg or "bill" in last_msg.lower():
-            return "আপনার চলতি মাসের বিদ্যুৎ বিল ₹১,২৪০। এটি ১৫ তারিখের মধ্যে পরিশোধ করুন।"
-        elif "बिजली" in last_msg or "power" in last_msg.lower():
-            return "आपके क्षेत्र में बिजली आपूर्ति शाम ६ बजे तक बहाल कर दी जाएगी।"
+        is_devanagari = any(0x0900 <= ord(c) <= 0x097F for c in last_msg)
+
+        if is_devanagari:
+            return "मैंने आपकी बात समझ ली है। बताइए मैं आपकी क्या सहायता कर सकता हूँ?"
+        elif "কেমন" in last_msg or "how" in last_msg.lower() or "kaise" in last_msg.lower():
+            return "আমি ভালো আছি, ধন্যবাদ। আপনি কেমন আছেন?"
+        elif "plan" in last_msg.lower() or "শো" in last_msg or "show" in last_msg.lower() or "aajaunga" in last_msg.lower():
+            return "দারুণ প্ল্যান, সবাই তৈরি থাকলে আমরা একসঙ্গে এগোতে পারি।"
+        elif "namaste" in last_msg.lower() or "hello" in last_msg.lower() or "নমস্কার" in last_msg:
+            return "নমস্কার! বলুন আজ আমি আপনাকে কীভাবে সাহায্য করতে পারি?"
         else:
-            return "নমস্কার, কলকাতা বিদ্যুৎ হেল্পলাইনে আপনাকে স্বাগতম। আমি কীভাবে সাহায্য করতে পারি?"
+            return "আমি আপনার কথা বুঝতে পেরেছি। বলুন আপনাকে আর কীভাবে সাহায্য করতে পারি?"

@@ -48,11 +48,15 @@ class GnaniTtsAdapter:
         }
 
     def _payload(self, req: TtsRequest) -> dict:
+        lang = req.language
+        if lang in ("hi-en", "default"):
+            lang = "en-IN"
+
         return {
             "text": req.text,
             "voice": req.voice,
             "model": req.model,
-            "language": req.language,
+            "language": lang,
             "speed": req.speed,
             "audio_config": {
                 "sample_rate": req.sample_rate,

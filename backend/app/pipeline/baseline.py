@@ -12,6 +12,7 @@ from typing import AsyncIterator, Optional, Tuple, Union
 from app.adapters.models import Msg, TtsRequest, TtsStats
 from app.metrics.recorder import TurnRecorder
 from app.metrics.store import MetricsStore, TurnMetric
+from app.routing.router import detect_language
 
 
 class BaselinePipeline:
@@ -81,12 +82,13 @@ class BaselinePipeline:
         yield {"type": "reply_text", "text": reply_text}
 
         # Step 3: Call TTS without caching or clause splitting
-        voice = self.voice_map.get(lang, "Kirra")
+        target_lang = lang or detect_language(reply_text, fallback="hi-IN")
+        voice = self.voice_map.get(target_lang) or ("Kirra" if "bn" in target_lang else "Nalini" if "hi" in target_lang else "Poorvi")
         req = TtsRequest(
             text=reply_text,
             voice=voice,
             model=self.model,
-            language=lang,
+            language=target_lang,
             sample_rate=self.sample_rate
         )
 
