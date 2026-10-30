@@ -35,12 +35,11 @@ def sanitize_speech_text(text: str) -> str:
     text = re.sub(r'^\s*[-•*]\s+', '', text, flags=re.MULTILINE)
     # Remove emojis (surrogates and standard unicode emoji blocks)
     emoji_pattern = re.compile(
-        "[\U00010000-\U0010ffff"
-        "\u2600-\u26ff"
-        "\u2700-\u27bf"
-        "\ufe00-\ufe0f"
-        "\u1f300-\u1f9ff]+",
-        flags=re.UNICODE
+    "[\U00010000-\U0010ffff"
+    "\u2600-\u26ff"
+    "\u2700-\u27bf"
+    "\ufe00-\ufe0f]+",
+    flags=re.UNICODE
     )
     text = emoji_pattern.sub('', text)
     # Normalize excessive whitespace
@@ -79,7 +78,7 @@ class LlmAdapter:
             "model": model,
             "messages": messages,
             "temperature": 0.3,
-            "max_tokens": 150
+            "max_tokens": 1024
         }
         r = await self.client.post(url, headers=headers, json=payload, timeout=20.0)
         r.raise_for_status()
@@ -91,7 +90,11 @@ class LlmAdapter:
         if not self.gemini_api_key:
             raise RuntimeError("Gemini API key is not configured for fallback.")
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.gemini_model}:generateContent?key={self.gemini_api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.gemini_model}:generateContent"
+        headers = {
+            "x-goog-api-key": self.gemini_api_key,
+            "Content-Type": "application/json"
+        }
         contents = []
         for m in history:
             role = "model" if m.role == "assistant" else "user"
@@ -100,15 +103,16 @@ class LlmAdapter:
         payload = {
             "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
             "contents": contents,
-            "generationConfig": {"temperature": 0.3, "maxOutputTokens": 150}
+            "generationConfig": {"temperature": 0.3, "maxOutputTokens": 1024}
         }
-        r = await self.client.post(url, json=payload, timeout=20.0)
+        r = await self.client.post(url, headers=headers, json=payload, timeout=20.0)
         r.raise_for_status()
         data = r.json()
         candidates = data.get("candidates", [])
         if not candidates:
-            return "Thank you, I am processing your request."
-        return candidates[0]["content"]["parts"][0]["text"]
+            return "Sorry, I could not generate a reply."
+        parts = candidates[0].get("content", {}).get("parts", [])
+        return "".join(p.get("text", "") for p in parts) or "Sorry, I could not generate a reply."
 
     async def reply(self, history: List[Msg], tier: str = "fast") -> str:
         """Requests conversational reply across Fast, Heavy, or Gemini Fallback tiers."""

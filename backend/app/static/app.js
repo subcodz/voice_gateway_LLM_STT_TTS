@@ -2,6 +2,8 @@
  * Gnani Voice Gateway - Interactive Split-Screen & Dashboard Client
  */
 
+const MIC_LANG = "bn-IN";
+
 let ws = null;
 let audioContext = null;
 let mediaStream = null;
@@ -172,7 +174,10 @@ async function executeBaselineTurn(text, lang, wavData = null) {
   baseWs.onmessage = (event) => {
     if (typeof event.data === "string") {
       const data = JSON.parse(event.data);
-      if (data.type === "transcript") {
+      if (data.type === "error") {
+        document.getElementById("base-response").innerText = "Error: " + (data.message || JSON.stringify(data));
+        document.getElementById("base-audio-status").innerText = "Error";
+      } else if (data.type === "transcript") {
         document.getElementById("base-step-stt").classList.remove("active-step");
         document.getElementById("base-step-llm").classList.add("active-step");
         document.getElementById("base-transcript").innerText = data.text;
@@ -240,7 +245,10 @@ async function executeGatewayTurn(text, lang, wavData = null) {
   gwWs.onmessage = (event) => {
     if (typeof event.data === "string") {
       const data = JSON.parse(event.data);
-      if (data.type === "transcript") {
+      if (data.type === "error") {
+        document.getElementById("gw-response").innerText = "Error: " + (data.message || JSON.stringify(data));
+        document.getElementById("gw-audio-status").innerText = "Error";
+      } else if (data.type === "transcript") {
         document.getElementById("gw-step-stt").classList.remove("active-step");
         document.getElementById("gw-step-route").classList.add("active-step");
         document.getElementById("gw-transcript").innerText = data.text;
@@ -338,7 +346,15 @@ function assembleAndPlayAudio(chunks, audioElementId, waveElementId) {
   };
 }
 
-// In-Browser Audio Recording & 16kHz WAV Encoding for Push-to-Talk
+// In-Browser Audio Recording & 16kHz WAV Encoding
+function toggleRecording() {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+}
+
 async function startRecording() {
   try {
     mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -360,8 +376,9 @@ async function startRecording() {
 
     isRecording = true;
     const btn = document.getElementById("ptt-btn");
-    btn.classList.add("recording");
-    document.getElementById("ptt-label").innerText = "Listening...";
+    if (btn) btn.classList.add("recording");
+    const pttLabel = document.getElementById("ptt-label");
+    if (pttLabel) pttLabel.innerText = "Listening... (Click to stop)";
   } catch (err) {
     console.error("Microphone access denied or unsupported:", err);
   }
@@ -374,7 +391,7 @@ function stopRecording() {
   const btn = document.getElementById("ptt-btn");
   if (btn) btn.classList.remove("recording");
   const pttLabel = document.getElementById("ptt-label");
-  if (pttLabel) pttLabel.innerText = "Push-to-Talk";
+  if (pttLabel) pttLabel.innerText = "Click to Speak";
 
   if (scriptProcessor) scriptProcessor.disconnect();
   if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
@@ -387,15 +404,23 @@ function stopRecording() {
     try { audioContext.close().catch(() => {}); } catch (_) {}
   }
 
-  if (wavBytes && wavBytes.byteLength > 44) {
-    resetPanelUI();
-    document.getElementById("base-transcript").innerText = "Transcribing spoken audio...";
-    document.getElementById("gw-transcript").innerText = "Transcribing spoken audio...";
-
-    // Send audio to BOTH arms concurrently
-    executeBaselineTurn("", "hi-IN", wavBytes);
-    executeGatewayTurn("", "hi-IN", wavBytes);
+  // Minimum length guard: at least 0.5s of audio (16,000 samples/sec * 2 bytes/sample * 0.5s = 16,000 bytes)
+  const MIN_WAV_BYTES = 16000;
+  if (!wavBytes || wavBytes.byteLength < MIN_WAV_BYTES) {
+    console.warn("Audio too short:", wavBytes ? wavBytes.byteLength : 0);
+    const shortMsg = "Recording was too short. Please click and speak for at least 1 second.";
+    document.getElementById("base-transcript").innerText = shortMsg;
+    document.getElementById("gw-transcript").innerText = shortMsg;
+    return;
   }
+
+  resetPanelUI();
+  document.getElementById("base-transcript").innerText = "Transcribing spoken audio...";
+  document.getElementById("gw-transcript").innerText = "Transcribing spoken audio...";
+
+  // Send audio to BOTH arms concurrently
+  executeBaselineTurn("", MIC_LANG, wavBytes);
+  executeGatewayTurn("", MIC_LANG, wavBytes);
 }
 
 // Standard 16 kHz Mono PCM16 WAV Encoder

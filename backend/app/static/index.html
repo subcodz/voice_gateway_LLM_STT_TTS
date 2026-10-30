@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gnani Voice Gateway | Audio Caching & Semantic Acceleration</title>
-  <meta name="description" content="A voice gateway between conversational voice agents and Gnani speech services that eliminates repeated STT, LLM, and TTS calls via semantic intent routing and exact audio caching.">
+  <meta name="description"
+    content="A voice gateway between conversational voice agents and Gnani speech services that eliminates repeated STT, LLM, and TTS calls via semantic intent routing and exact audio caching.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/static/styles.css?v=20261029b">
 </head>
+
 <body class="dark-theme">
   <!-- Top Global Header -->
   <header class="app-header">
@@ -32,13 +37,7 @@
     </div>
 
     <div class="header-right">
-      <div class="status-pill safe-mode">
-        <span class="pulsing-dot"></span>
-        <span id="api-mode-label">Mock Mode (Safe / 0 Credits)</span>
-      </div>
-      <div class="status-pill kill-switch-pill" id="kill-switch-badge">
-        <span>Kill Switch: Off</span>
-      </div>
+
     </div>
   </header>
 
@@ -232,9 +231,9 @@
       </div>
 
       <div class="mic-controls">
-        <button id="ptt-btn" class="mic-btn" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording()" ontouchend="stopRecording()">
+        <button id="ptt-btn" class="mic-btn" onclick="toggleRecording()" title="Click to speak, click again to send">
           <span class="mic-icon">🎙️</span>
-          <span id="ptt-label">Push-to-Talk</span>
+          <span id="ptt-label">Click to Speak</span>
         </button>
       </div>
     </footer>
@@ -269,7 +268,8 @@
               <div class="bar-seg seg-router" style="width: 8%" title="Router: 5ms">Router 5ms</div>
               <div class="bar-seg seg-cache-hit" style="width: 25%" title="Cached TTFA: 28ms">TTFA 28ms</div>
             </div>
-            <div class="total-latency-text">Total Turn: <strong id="wf-gw-total" class="text-emerald">52 ms (80% faster)</strong></div>
+            <div class="total-latency-text">Total Turn: <strong id="wf-gw-total" class="text-emerald">52 ms (80%
+                faster)</strong></div>
           </div>
         </div>
       </div>
@@ -322,7 +322,8 @@
   <main id="budget-view" class="view-container">
     <div class="budget-header-box">
       <h2>Credit Budget & Hard Caps Enforcement</h2>
-      <p>Tracking allocation across 5,000 total hackathon credits (converted at conservative 300 chars/credit to ensure caps are never breached).</p>
+      <p>Tracking allocation across 5,000 total hackathon credits (converted at conservative 300 chars/credit to ensure
+        caps are never breached).</p>
     </div>
 
     <div class="budget-cards-grid" id="budget-cards-container">
@@ -332,4 +333,5 @@
 
   <script src="/static/app.js?v=20261029b"></script>
 </body>
+
 </html>

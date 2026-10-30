@@ -7,6 +7,7 @@ This reduces TTFA by up to 85% and eliminates up to 90% of paid TTS/LLM calls on
 enterprise flows while maintaining graceful degradation to baseline on any cache or model error.
 """
 
+import logging
 import time
 from typing import AsyncIterator, Optional, Union
 from app.adapters.models import Msg, TtsRequest, TtsStats
@@ -19,6 +20,8 @@ from app.metrics.recorder import TurnRecorder
 from app.metrics.store import MetricsStore
 from app.routing.router import Router, detect_language
 from app.routing.splitter import split_into_clauses
+
+log = logging.getLogger("gateway")
 
 
 class GatewayPipeline:
@@ -73,12 +76,14 @@ class GatewayPipeline:
         if wav_input and not text_input:
             t0 = time.perf_counter()
             try:
+                log.info("STT request: %d bytes, lang=%s", len(wav_input), lang)
                 res = await self.stt_adapter.transcribe(wav_input, lang=lang)
                 stt_ms = round((time.perf_counter() - t0) * 1000)
                 recorder.record_stt(stt_ms)
                 transcript = res.text
+                log.info("STT finished in %d ms: %s", stt_ms, transcript)
             except Exception:
-                # STT error: degrade gracefully
+                log.exception("STT failed:")
                 transcript = ""
             yield {"type": "transcript", "text": transcript}
 
@@ -113,10 +118,12 @@ class GatewayPipeline:
             try:
                 reply_text = await self.llm_adapter.reply(history, tier=tier)
             except Exception:
+                log.exception("Fast LLM failed:")
                 # Degradation rule 1: fast LLM failure degrades to heavy tier
                 try:
                     reply_text = await self.llm_adapter.reply(history, tier="heavy")
                 except Exception:
+                    log.exception("Heavy LLM failed:")
                     reply_text = "Thank you, I am processing your request."
             llm_ms = round((time.perf_counter() - t0) * 1000)
             recorder.record_llm(llm_ms, calls=1)
@@ -124,6 +131,11 @@ class GatewayPipeline:
         yield {"type": "reply_text", "text": reply_text}
 
         # Step 4: Split sanitized response into clauses
+        log.info("LLM reply: %r", reply_text)
+        if not reply_text or not reply_text.strip():
+            yield {"type": "error", "stage": "llm", "message": "LLM returned an empty reply (check max_tokens and model)"}
+            return
+
         clauses = split_into_clauses(reply_text)
         if not clauses:
             clauses = [reply_text]

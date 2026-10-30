@@ -24,6 +24,11 @@ class TtsIncomplete(Exception):
     pass
 
 
+class TtsTransient(Exception):
+    """Gnani sent a retryable error event inside the SSE stream."""
+    pass
+
+
 class GnaniTtsAdapter:
     def __init__(
         self,
@@ -113,7 +118,9 @@ class GnaniTtsAdapter:
                             backoff *= 2.0
                             continue
 
-                        response.raise_for_status()
+                        if response.status_code >= 400:
+                            body = (await response.aread()).decode("utf-8", "replace")[:500]
+                            raise RuntimeError(f"Gnani TTS {response.status_code}: {body}")
 
                         event = None
                         data_lines = []
@@ -132,6 +139,12 @@ class GnaniTtsAdapter:
                                             parsed = json.loads(full_data)
                                         except json.JSONDecodeError:
                                             pass
+
+                                    if event == "error":
+                                        code = parsed.get("status_code", 0) if isinstance(parsed, dict) else 0
+                                        if code in (429, 500, 502, 503, 504):
+                                            raise TtsTransient(full_data)
+                                        raise RuntimeError(f"Gnani TTS error event: {full_data}")
 
                                     if event == "chunk" and parsed.get("audio"):
                                         raw_chunk = base64.b64decode(parsed["audio"])
@@ -165,7 +178,7 @@ class GnaniTtsAdapter:
 
                         break
 
-                except (httpx.RequestError, httpx.HTTPStatusError) as exc:
+                except (httpx.RequestError, httpx.HTTPStatusError, TtsTransient) as exc:
                     if yielded_any or retries >= max_retries:
                         raise
                     retries += 1

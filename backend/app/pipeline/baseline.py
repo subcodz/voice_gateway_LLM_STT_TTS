@@ -81,6 +81,10 @@ class BaselinePipeline:
 
         yield {"type": "reply_text", "text": reply_text}
 
+        if not reply_text or not reply_text.strip():
+            yield {"type": "error", "stage": "llm", "message": "LLM returned an empty reply"}
+            return
+
         # Step 3: Call TTS without caching or clause splitting
         target_lang = lang or detect_language(reply_text, fallback="hi-IN")
         voice = self.voice_map.get(target_lang) or ("Kirra" if "bn" in target_lang else "Nalini" if "hi" in target_lang else "Poorvi")

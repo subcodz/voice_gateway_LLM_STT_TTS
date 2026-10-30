@@ -35,6 +35,9 @@ from app.pipeline.gateway import GatewayPipeline
 from app.routing.intents import IntentCatalog
 from app.routing.router import Router
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 app = FastAPI(title="Gnani Voice Gateway API", version="1.0.0")
 
 app.add_middleware(
@@ -305,6 +308,12 @@ async def websocket_endpoint(websocket: WebSocket):
             elif "bytes" in message and message["bytes"]:
                 wav_bytes = message["bytes"]
                 log.info("Binary WAV received: %d bytes", len(wav_bytes))
+
+                if len(wav_bytes) < 4000:
+                    log.warning("Audio input too short (%d bytes), skipping STT", len(wav_bytes))
+                    await websocket.send_json({"type": "transcript", "text": ""})
+                    await websocket.send_json({"type": "error", "message": "Recording was too short. Please speak again."})
+                    continue
 
                 # Use pending audio metadata if available, otherwise sensible defaults
                 if pending_audio_meta:
