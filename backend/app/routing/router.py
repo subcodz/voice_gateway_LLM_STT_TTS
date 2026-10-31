@@ -6,6 +6,9 @@ If an utterance matches a known non-personal FAQ above the semantic threshold,
 it routes to 'cached_intent' (saving LLM latency and cost). Queries containing private
 or personalized indicators are routed to 'personalized' (enforcing live LLM generation
 without caching), and complex escalations route to the 'heavy_llm' tier.
+
+The personal / escalation vocabulary lives in data/routing_rules.yaml and is
+matched by app.routing.rules (word-aware, script-aware), not by substring checks.
 """
 
 from typing import Optional
@@ -13,6 +16,7 @@ from pydantic import BaseModel
 
 from app.cache.semantic import SemanticCache
 from app.routing.intents import IntentCatalog
+from app.routing.rules import RoutingRules
 
 
 class RouteDecision(BaseModel):
@@ -53,64 +57,27 @@ def detect_language(text: str, fallback: str = "hi-IN") -> str:
     return fallback
 
 
-# Key phrases indicating personalized, account-specific inquiries
-PERSONAL_KEYWORDS = [
-    "আমার বিল", "আমার বকেয়া", "मेरा बिल", "बकाया बिल", "my bill",
-    "মিটার নম্বর", "मीटर नंबर", "meter number", "অভিযোগ নম্বর",
-    "शिकायत संख्या", "complaint number", "status", "স্ট্যাটাস", "खाता", "account",
-    "বিল কত", "কত বিল", "কত টাকা বিল", "বকেয়া কত", "লাস্ট ডেট", "last date", "due date",
-    "অভিযোগের কি", "কমপ্লেন এর", "কি হলো আমার"
-]
-
-# Possessive pronouns that indicate personal context when combined with bill/complaint/meter
-POSSESSIVES = ["আমার", "আমার", "मेरा", "मेरी", "मेरे", "my", "amar"]
-ACCOUNT_TERMS = ["বিল", "বকেয়া", "মিটার", "কমপ্লেন", "অভিযোগ", "বিল", "bill", "meter", "complaint", "due"]
-
-# Phrases indicating escalation / heavy reasoning
-ESCALATION_KEYWORDS = [
-    "আদালত", "পুলিশ", "legal", "dispute", "court", "ক্ষতিপূরণ",
-    "मुआवजा", "विवाद", "fir", "threat"
-]
-
-
 class Router:
-    def __init__(self, catalog: IntentCatalog, semantic_cache: SemanticCache):
+    def __init__(
+        self,
+        catalog: IntentCatalog,
+        semantic_cache: SemanticCache,
+        rules: Optional[RoutingRules] = None,
+    ):
         self.catalog = catalog
         self.semantic_cache = semantic_cache
+        self.rules = rules if rules is not None else RoutingRules.load()
 
     def route(self, text: str, lang: str = "bn-IN") -> RouteDecision:
         """Determines the routing path for an incoming query."""
         clean_text = text.strip()
-        lower_text = clean_text.lower()
         effective_lang = detect_language(clean_text, fallback=lang)
 
-        # 1. Check for personal account-specific queries (never semantic-cached)
-        for kw in PERSONAL_KEYWORDS:
-            if kw.lower() in lower_text:
-                return RouteDecision(
-                    decision="personalized",
-                    sim_score=0.0,
-                    reason=f"Detected personal keyword '{kw}'"
-                )
-
-        # Check combination of possessive pronoun + account term
-        has_possessive = any(p in lower_text for p in POSSESSIVES)
-        has_account_term = any(a in lower_text for a in ACCOUNT_TERMS)
-        if has_possessive and has_account_term:
-            return RouteDecision(
-                decision="personalized",
-                sim_score=0.0,
-                reason="Detected personal possessive query on account/bill/meter"
-            )
-
-        # 2. Check for legal or dispute escalation (routes to heavy LLM)
-        for kw in ESCALATION_KEYWORDS:
-            if kw.lower() in lower_text:
-                return RouteDecision(
-                    decision="heavy_llm",
-                    sim_score=0.0,
-                    reason=f"Detected escalation keyword '{kw}'"
-                )
+        # 1 & 2. Personal account queries (never semantic-cached) and legal or
+        # dispute escalation (heavy LLM). Personal is checked before escalation.
+        hit = self.rules.classify(clean_text)
+        if hit:
+            return RouteDecision(decision=hit.label, sim_score=0.0, reason=hit.reason)
 
         # 3. Check Semantic Cache for whitelisted non-personal intent match
         match = self.semantic_cache.lookup(clean_text, effective_lang)

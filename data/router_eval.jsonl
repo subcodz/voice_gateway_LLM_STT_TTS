@@ -1,0 +1,128 @@
+{"text": "আমার এই মাসের বিল কত এসেছে?", "lang": "bn-IN", "expected": "personalized", "notes": "possessive + bill"}
+{"text": "আমার বকেয়া কত টাকা আছে?", "lang": "bn-IN", "expected": "personalized", "notes": "possessive + dues"}
+{"text": "আমার মিটার নম্বর দিয়ে বিল দেখতে চাই", "lang": "bn-IN", "expected": "personalized", "notes": "meter number phrase"}
+{"text": "আমার অভিযোগের কি হলো?", "lang": "bn-IN", "expected": "personalized", "notes": "complaint follow-up"}
+{"text": "কমপ্লেন স্ট্যাটাস চেক করতে চাই", "lang": "bn-IN", "expected": "personalized", "notes": "status phrase, no possessive"}
+{"text": "আমার বিলটা ভুল এসেছে মনে হচ্ছে", "lang": "bn-IN", "expected": "personalized", "notes": "inflected bill (বিলটা)"}
+{"text": "বিল কত এসেছে এবার?", "lang": "bn-IN", "expected": "personalized", "notes": "implicit possessive, amount question"}
+{"text": "আমার পেমেন্ট হয়েছে কিনা দেখুন", "lang": "bn-IN", "expected": "personalized", "notes": "payment status"}
+{"text": "আমার অভিযোগ নম্বর ৪৫২১, এখন কী অবস্থা?", "lang": "bn-IN", "expected": "personalized", "notes": "complaint number"}
+{"text": "কত টাকা বিল বাকি আছে আমার?", "lang": "bn-IN", "expected": "personalized", "notes": "word order variation"}
+{"text": "আমার মিটারের রিডিং ভুল দেখাচ্ছে", "lang": "bn-IN", "expected": "personalized", "notes": "inflected meter (মিটারের)"}
+{"text": "मेरा इस महीने का बिल कितना आया है?", "lang": "hi-IN", "expected": "personalized", "notes": "possessive + bill"}
+{"text": "मेरा बकाया बिल बताइए", "lang": "hi-IN", "expected": "personalized", "notes": "dues"}
+{"text": "मेरी शिकायत का क्या हुआ?", "lang": "hi-IN", "expected": "personalized", "notes": "complaint follow-up"}
+{"text": "मीटर नंबर से बिल चेक करना है", "lang": "hi-IN", "expected": "personalized", "notes": "meter number phrase"}
+{"text": "बिजली का बिल कितना आया है", "lang": "hi-IN", "expected": "personalized", "notes": "implicit possessive, amount question"}
+{"text": "मेरे घर का बिल गलत आया है", "lang": "hi-IN", "expected": "personalized", "notes": "possessive + bill"}
+{"text": "शिकायत नंबर 5532 का स्टेटस बताओ", "lang": "hi-IN", "expected": "personalized", "notes": "complaint number"}
+{"text": "मेरा पेमेंट अभी तक नहीं दिखा रहा", "lang": "hi-IN", "expected": "personalized", "notes": "payment status"}
+{"text": "बिल की ड्यू डेट क्या है?", "lang": "hi-IN", "expected": "personalized", "notes": "due date phrase"}
+{"text": "mera bill kitna hai", "lang": "hi-en", "expected": "personalized", "notes": "hinglish amount question"}
+{"text": "meri complaint ka status batao", "lang": "hi-en", "expected": "personalized", "notes": "hinglish possessive + complaint"}
+{"text": "mera meter number 4455 hai, bill check karo", "lang": "hi-en", "expected": "personalized", "notes": "hinglish meter number"}
+{"text": "bill kitna aaya is mahine", "lang": "hi-en", "expected": "personalized", "notes": "hinglish implicit possessive"}
+{"text": "what is my bill this month?", "lang": "hi-en", "expected": "personalized", "notes": "english possessive"}
+{"text": "my last bill was wrong", "lang": "hi-en", "expected": "personalized", "notes": "english possessive"}
+{"text": "I want to check my complaint status", "lang": "hi-en", "expected": "personalized", "notes": "english complaint"}
+{"text": "what is my outstanding due?", "lang": "hi-en", "expected": "personalized", "notes": "english dues"}
+{"text": "amar bill koto esheche", "lang": "hi-en", "expected": "personalized", "notes": "banglish amount question"}
+{"text": "amar complaint er ki holo", "lang": "hi-en", "expected": "personalized", "notes": "banglish complaint follow-up"}
+{"text": "amar meter reading ta bhul dekhacche", "lang": "hi-en", "expected": "personalized", "notes": "banglish meter"}
+{"text": "bakeya koto ache amar", "lang": "hi-en", "expected": "personalized", "notes": "banglish dues"}
+{"text": "Please tell me my pending dues", "lang": "hi-en", "expected": "personalized", "notes": "english dues"}
+{"text": "My payment is not showing in the system", "lang": "hi-en", "expected": "personalized", "notes": "english payment"}
+{"text": "Can you check the status of complaint number 7788?", "lang": "hi-en", "expected": "personalized", "notes": "complaint number"}
+{"text": "What is the due date for my bill?", "lang": "hi-en", "expected": "personalized", "notes": "due date"}
+{"text": "My meter number is 99281, why was the bill so high?", "lang": "hi-en", "expected": "personalized", "notes": "meter number"}
+{"text": "I paid my bill yesterday but it still shows unpaid", "lang": "hi-en", "expected": "personalized", "notes": "english bill"}
+{"text": "আমি এই বিল নিয়ে আদালতে যাব", "lang": "bn-IN", "expected": "heavy_llm", "notes": "court, bill word but no possessive"}
+{"text": "আমি ক্ষতিপূরণ চাই, তিন দিন ধরে বিদ্যুৎ নেই", "lang": "bn-IN", "expected": "heavy_llm", "notes": "compensation"}
+{"text": "পুলিশে অভিযোগ করব আপনাদের বিরুদ্ধে", "lang": "bn-IN", "expected": "heavy_llm", "notes": "police"}
+{"text": "আমি উকিলের সাথে কথা বলেছি, মামলা করব", "lang": "bn-IN", "expected": "heavy_llm", "notes": "lawyer + case"}
+{"text": "ভোক্তা ফোরামে যাব আমি", "lang": "bn-IN", "expected": "heavy_llm", "notes": "consumer forum"}
+{"text": "এটা আইনি ব্যাপার হয়ে যাচ্ছে", "lang": "bn-IN", "expected": "heavy_llm", "notes": "legal matter"}
+{"text": "আপনার লোকজন আমাকে হুমকি দিচ্ছে", "lang": "bn-IN", "expected": "heavy_llm", "notes": "threat"}
+{"text": "আমি legal action নেব", "lang": "bn-IN", "expected": "heavy_llm", "notes": "code-mixed legal"}
+{"text": "मैं कोर्ट जाऊँगा इस मामले में", "lang": "hi-IN", "expected": "heavy_llm", "notes": "court"}
+{"text": "मुझे मुआवजा चाहिए, चार दिन से बिजली नहीं है", "lang": "hi-IN", "expected": "heavy_llm", "notes": "compensation"}
+{"text": "मैं पुलिस में शिकायत करूँगा", "lang": "hi-IN", "expected": "heavy_llm", "notes": "police"}
+{"text": "मैं वकील से बात कर रहा हूँ", "lang": "hi-IN", "expected": "heavy_llm", "notes": "lawyer"}
+{"text": "यह कानूनी मामला बन गया है", "lang": "hi-IN", "expected": "heavy_llm", "notes": "legal matter"}
+{"text": "मैं उपभोक्ता फोरम में जाऊँगा", "lang": "hi-IN", "expected": "heavy_llm", "notes": "consumer forum"}
+{"text": "एफआईआर दर्ज करवाऊँगा", "lang": "hi-IN", "expected": "heavy_llm", "notes": "FIR"}
+{"text": "I will take this to the consumer forum", "lang": "hi-en", "expected": "heavy_llm", "notes": "consumer forum"}
+{"text": "I want compensation for the damaged appliances", "lang": "hi-en", "expected": "heavy_llm", "notes": "compensation"}
+{"text": "I'm going to file an FIR against your staff", "lang": "hi-en", "expected": "heavy_llm", "notes": "FIR"}
+{"text": "I will call my lawyer if this isn't fixed today", "lang": "hi-en", "expected": "heavy_llm", "notes": "lawyer"}
+{"text": "This is a legal dispute now", "lang": "hi-en", "expected": "heavy_llm", "notes": "legal dispute"}
+{"text": "I will sue the company", "lang": "hi-en", "expected": "heavy_llm", "notes": "sue"}
+{"text": "We will go to court", "lang": "hi-en", "expected": "heavy_llm", "notes": "court"}
+{"text": "I will go to the police", "lang": "hi-en", "expected": "heavy_llm", "notes": "police"}
+{"text": "I will file a complaint with the ombudsman", "lang": "hi-en", "expected": "heavy_llm", "notes": "ombudsman"}
+{"text": "mujhe muavja chahiye", "lang": "hi-en", "expected": "heavy_llm", "notes": "romanized compensation"}
+{"text": "ami court e jabo", "lang": "hi-en", "expected": "heavy_llm", "notes": "banglish court"}
+{"text": "ami thanay jabo", "lang": "hi-en", "expected": "heavy_llm", "notes": "banglish police station"}
+{"text": "mujhe muaavza chahiye", "lang": "hi-en", "expected": "heavy_llm", "notes": "SPELLING VARIANT not in list (expected miss)"}
+{"text": "amake khotipuran dite hobe", "lang": "hi-en", "expected": "heavy_llm", "notes": "SPELLING VARIANT not in list (expected miss)"}
+{"text": "tumhare upar case thok dunga", "lang": "hi-en", "expected": "heavy_llm", "notes": "paraphrase threat, no keyword (expected miss)"}
+{"text": "I will go to court over my bill", "lang": "hi-en", "expected": "personalized", "notes": "overlap: personal wins by current priority order"}
+{"text": "আমার বিল নিয়ে আদালতে যাব", "lang": "bn-IN", "expected": "personalized", "notes": "overlap: personal wins by current priority order"}
+{"text": "What is the first step to apply for a new connection?", "lang": "hi-en", "expected": "general", "notes": "trap: 'fir' in first"}
+{"text": "Please confirm the office timings", "lang": "hi-en", "expected": "general", "notes": "trap: 'fir' in confirm"}
+{"text": "Is there a fire safety rule for meters?", "lang": "hi-en", "expected": "general", "notes": "trap: 'fir' in fire"}
+{"text": "Thank you for your courtesy", "lang": "hi-en", "expected": "general", "notes": "trap: 'court' in courtesy"}
+{"text": "Can I get the summary of tariff plans?", "lang": "hi-en", "expected": "general", "notes": "trap: 'my' in summary"}
+{"text": "Why is the status of the power outage unknown in my area?", "lang": "hi-en", "expected": "general", "notes": "old: bare 'status' made this personal"}
+{"text": "Is the transformer on fire near my house?", "lang": "hi-en", "expected": "general", "notes": "safety, possessive but no account term"}
+{"text": "Which account types do you offer for commercial users?", "lang": "hi-en", "expected": "general", "notes": "old: bare 'account' made this personal"}
+{"text": "নমস্কার", "lang": "bn-IN", "expected": "general", "notes": "greeting"}
+{"text": "ধন্যবাদ", "lang": "bn-IN", "expected": "general", "notes": "thanks"}
+{"text": "কেমন আছেন?", "lang": "bn-IN", "expected": "general", "notes": "how are you"}
+{"text": "কখন কারেন্ট আসবে?", "lang": "bn-IN", "expected": "general", "notes": "outage"}
+{"text": "আমাদের এলাকায় বিদ্যুৎ নেই", "lang": "bn-IN", "expected": "general", "notes": "outage, 'our' not 'my'"}
+{"text": "বিল কীভাবে পেমেন্ট করব?", "lang": "bn-IN", "expected": "general", "notes": "payment how-to, no possessive"}
+{"text": "অনলাইনে বিল দেওয়ার উপায় কি?", "lang": "bn-IN", "expected": "general", "notes": "payment how-to"}
+{"text": "নতুন কানেকশন নিতে কি কি কাগজ লাগবে?", "lang": "bn-IN", "expected": "general", "notes": "new connection"}
+{"text": "অফিস কখন খোলা থাকে?", "lang": "bn-IN", "expected": "general", "notes": "office hours"}
+{"text": "মিটার রিডিং কখন নেওয়া হয়?", "lang": "bn-IN", "expected": "general", "notes": "meter schedule, no possessive"}
+{"text": "সোলার প্যানেলের সরকারি স্কিম কি?", "lang": "bn-IN", "expected": "general", "notes": "solar"}
+{"text": "ভোল্টেজ খুব কম, বাতি জ্বলছে না", "lang": "bn-IN", "expected": "general", "notes": "voltage"}
+{"text": "কাস্টমার কেয়ার নম্বর কত?", "lang": "bn-IN", "expected": "general", "notes": "support contact"}
+{"text": "অভিযোগ কীভাবে জানাব?", "lang": "bn-IN", "expected": "general", "notes": "how to complain, no possessive"}
+{"text": "প্রতি ইউনিটের দাম কত?", "lang": "bn-IN", "expected": "general", "notes": "tariff"}
+{"text": "ট্রান্সফর্মারে আগুন লেগেছে", "lang": "bn-IN", "expected": "general", "notes": "safety emergency"}
+{"text": "বিদ্যুৎ সাশ্রয় করব কীভাবে?", "lang": "bn-IN", "expected": "general", "notes": "energy saving"}
+{"text": "नमस्ते", "lang": "hi-IN", "expected": "general", "notes": "greeting"}
+{"text": "धन्यवाद", "lang": "hi-IN", "expected": "general", "notes": "thanks"}
+{"text": "बिजली कब आएगी?", "lang": "hi-IN", "expected": "general", "notes": "outage"}
+{"text": "हमारे इलाके में बिजली नहीं है", "lang": "hi-IN", "expected": "general", "notes": "outage, 'our'"}
+{"text": "बिल ऑनलाइन कैसे भरें?", "lang": "hi-IN", "expected": "general", "notes": "payment how-to"}
+{"text": "नया कनेक्शन कैसे मिलेगा?", "lang": "hi-IN", "expected": "general", "notes": "new connection"}
+{"text": "ऑफिस कब खुलता है?", "lang": "hi-IN", "expected": "general", "notes": "office hours"}
+{"text": "मीटर रीडिंग कब होती है?", "lang": "hi-IN", "expected": "general", "notes": "meter schedule"}
+{"text": "सोलर सब्सिडी कितनी मिलेगी?", "lang": "hi-IN", "expected": "general", "notes": "solar"}
+{"text": "शिकायत कैसे दर्ज करूँ?", "lang": "hi-IN", "expected": "general", "notes": "how to complain"}
+{"text": "कस्टमर केयर का नंबर क्या है?", "lang": "hi-IN", "expected": "general", "notes": "support contact"}
+{"text": "बिजली बचाने के तरीके बताइए", "lang": "hi-IN", "expected": "general", "notes": "energy saving"}
+{"text": "Hello", "lang": "hi-en", "expected": "general", "notes": "greeting"}
+{"text": "how are you", "lang": "hi-en", "expected": "general", "notes": "how are you"}
+{"text": "thank you so much", "lang": "hi-en", "expected": "general", "notes": "thanks"}
+{"text": "when will the power be back?", "lang": "hi-en", "expected": "general", "notes": "outage"}
+{"text": "light kab aayegi", "lang": "hi-en", "expected": "general", "notes": "hinglish outage"}
+{"text": "current kokhon asbe", "lang": "hi-en", "expected": "general", "notes": "banglish outage"}
+{"text": "How can I pay the bill online?", "lang": "hi-en", "expected": "general", "notes": "payment how-to"}
+{"text": "online bill payment karne ka tarika batao", "lang": "hi-en", "expected": "general", "notes": "hinglish payment how-to"}
+{"text": "what documents are needed for a new connection", "lang": "hi-en", "expected": "general", "notes": "new connection"}
+{"text": "what are the helpdesk timings", "lang": "hi-en", "expected": "general", "notes": "office hours"}
+{"text": "when is meter reading done in my locality", "lang": "hi-en", "expected": "general", "notes": "CEILING: schedule question, but possessive 'my' + 'meter' (expected miss)"}
+{"text": "How do I register a complaint?", "lang": "hi-en", "expected": "general", "notes": "how to complain"}
+{"text": "what is the tariff per unit", "lang": "hi-en", "expected": "general", "notes": "tariff"}
+{"text": "solar subsidy kitni milegi", "lang": "hi-en", "expected": "general", "notes": "solar"}
+{"text": "voltage bahut low hai", "lang": "hi-en", "expected": "general", "notes": "voltage"}
+{"text": "customer care number kya hai", "lang": "hi-en", "expected": "general", "notes": "support contact"}
+{"text": "What happens if bills are not paid on time?", "lang": "hi-en", "expected": "general", "notes": "general policy"}
+{"text": "How do I reduce my electricity bill?", "lang": "hi-en", "expected": "general", "notes": "CEILING: generic advice, but possessive + bill (expected miss)"}
+{"text": "mera bill kaise kam kare", "lang": "hi-en", "expected": "general", "notes": "CEILING: generic energy-saving advice (expected miss)"}
+{"text": "আমার বিদ্যুৎ বিল কমানোর উপায় কি?", "lang": "bn-IN", "expected": "general", "notes": "CEILING: generic energy-saving advice (expected miss)"}
+{"text": "Is it legal to run a generator at home?", "lang": "hi-en", "expected": "general", "notes": "CEILING: 'legal' used innocently (expected miss)"}

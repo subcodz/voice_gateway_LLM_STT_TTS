@@ -1,0 +1,179 @@
+# Routing rules: personal-data guardrail and escalation detection.
+#
+# How matching works (see backend/app/routing/rules.py):
+#   - Latin-script entries match WHOLE WORDS only ("fir" does not match "first").
+#   - Bengali / Devanagari entries match word PREFIXES with a short ending, so
+#     inflected forms still hit (বিল matches বিলের, বিলটা).
+#   - Entries with spaces are phrases: the words must appear consecutively.
+#   - Everything is lowercased and Unicode-normalized before matching.
+#
+# Extending: add a line, run `python scripts/eval_router.py`, check no class got
+# worse. Quote an entry if it could be read as a YAML boolean (no, yes, on, off).
+# These are seed lists. Rules cannot catch paraphrases or spelling variants of
+# romanized words; that is the job of the embedding classifier (next step).
+
+personal:
+  # Strong signals that the caller is asking about their own account, even
+  # without a possessive word.
+  phrases:
+    # English
+    - meter number
+    - consumer number
+    - consumer id
+    - customer id
+    - account number
+    - complaint number
+    - ticket number
+    - complaint status
+    - due date
+    - last date
+    # Bengali
+    - মিটার নম্বর
+    - মিটার নাম্বার
+    - কনজিউমার নম্বর
+    - গ্রাহক নম্বর
+    - অভিযোগ নম্বর
+    - অভিযোগের স্ট্যাটাস
+    - অভিযোগের অবস্থা
+    - কমপ্লেন স্ট্যাটাস
+    - অভিযোগের কি হলো
+    - অভিযোগের কী হলো
+    - কমপ্লেনের কি হলো
+    - কমপ্লেনের কী হলো
+    - বিল কত
+    - কত বিল
+    - কত টাকা বিল
+    - বকেয়া কত
+    - লাস্ট ডেট
+    - ডিউ ডেট
+    # Hindi
+    - मीटर नंबर
+    - कंज्यूमर नंबर
+    - शिकायत संख्या
+    - शिकायत नंबर
+    - शिकायत की स्थिति
+    - शिकायत स्टेटस
+    - कंप्लेंट स्टेटस
+    - बिल कितना
+    - कितना बिल
+    - बकाया कितना
+    - कितना बकाया
+    - बकाया बिल
+    - लास्ट डेट
+    - ड्यू डेट
+    # Hinglish / Banglish (romanized)
+    - bill kitna
+    - bill kitne
+    - kitna bill
+    - bakaya kitna
+    - bill koto
+    - koto bill
+    - bakeya koto
+    - bokeya koto
+
+  # A possessive word AND an account term anywhere in the text => personal.
+  possessives:
+    - my
+    - mine
+    - mera
+    - meri
+    - mere
+    - amar
+    - আমার
+    - मेरा
+    - मेरी
+    - मेरे
+
+  account_terms:
+    # English / romanized
+    - bill
+    - bills
+    - billing
+    - meter
+    - complaint
+    - complaints
+    - due
+    - dues
+    - outstanding
+    - arrears
+    - ticket
+    - payment
+    - payments
+    - refund
+    - bakaya
+    - bakeya
+    - bokeya
+    - shikayat
+    - abhijog
+    # Bengali
+    - বিল
+    - বকেয়া
+    - মিটার
+    - কমপ্লেন
+    - অভিযোগ
+    - পেমেন্ট
+    - রিফান্ড
+    # Hindi
+    - बिल
+    - बकाया
+    - मीटर
+    - शिकायत
+    - भुगतान
+    - पेमेंट
+    - रिफंड
+
+escalation:
+  # Legal threats, compensation demands, police involvement. Routed to the heavy tier.
+  terms:
+    # English
+    - legal
+    - lawyer
+    - attorney
+    - sue
+    - lawsuit
+    - court
+    - dispute
+    - fir
+    - police
+    - threat
+    - compensation
+    - ombudsman
+    - consumer forum
+    - consumer commission
+    # Bengali
+    - আদালত
+    - পুলিশ
+    - থানা
+    - মামলা
+    - ক্ষতিপূরণ
+    - উকিল
+    - আইনজীবী
+    - আইনি
+    - আইনগত
+    - হুমকি
+    - ভোক্তা ফোরাম
+    # Hindi
+    - कोर्ट
+    - अदालत
+    - पुलिस
+    - थाना
+    - मुकदमा
+    - मुआवजा
+    - वकील
+    - कानूनी
+    - विवाद
+    - धमकी
+    - एफआईआर
+    - उपभोक्ता फोरम
+    - उपभोक्ता आयोग
+    # Hinglish / Banglish (romanized)
+    - muavja
+    - khotipuron
+    - kshatipuron
+    - vakeel
+    - ukil
+    - adalot
+    - mamla
+    - thana
+    - thanay
+    - pulis

@@ -104,7 +104,7 @@ class GatewayConfig(BaseModel):
     mock_apis: bool = Field(default_factory=lambda: os.getenv("MOCK_APIS", "0" if os.getenv("GNANI_API_KEY") else "1") in ("1", "true", "True"))
 
     # Semantic Cache Threshold
-    semantic_threshold: float = 0.82
+    semantic_threshold: float = Field(default_factory=lambda: float(os.getenv("SEMANTIC_THRESHOLD", "0.82")))
 
 
 def get_config() -> GatewayConfig:
