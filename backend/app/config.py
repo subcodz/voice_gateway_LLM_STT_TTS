@@ -106,6 +106,15 @@ class GatewayConfig(BaseModel):
     # Semantic Cache Threshold
     semantic_threshold: float = Field(default_factory=lambda: float(os.getenv("SEMANTIC_THRESHOLD", "0.82")))
 
+    # Session demo (both TTS arms spend credits, so these caps matter)
+    session_max_turns: int = 10
+    session_max_tts_chars: int = 1500          # per session, both arms combined
+    session_ip_tts_chars_day: int = 6000       # per IP per day, both arms combined
+    session_max_reply_chars: int = 220         # reply is clipped to this before TTS
+    session_ttl_s: int = 1800
+    session_semantic_threshold: float = Field(default_factory=lambda: float(os.getenv("SESSION_SEMANTIC_THRESHOLD", "0.90")))
+    measured_chars_per_credit: int = 370       # measured ratio, used for savings display (budget keeps 300)
+
 
 def get_config() -> GatewayConfig:
     _load_env_file()

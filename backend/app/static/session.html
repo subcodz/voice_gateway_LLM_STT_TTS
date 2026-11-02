@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Gateway | Session Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css?v=20261029b">
+  <style>
+    .sess-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      padding: 1.25rem 2.5rem 1.5rem;
+      flex: 1;
+    }
+
+    .sess-intro {
+      font-size: 0.8rem;
+      color: var(--text-ssecondary);
+      line-height: 1.6;
+    }
+
+    .sess-intro b {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .convo {
+      background: var(--bg-surface-0);
+      border: 1px solid var(--border-hairline);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 110px;
+    }
+
+    .convo-empty {
+      color: var(--text-faint);
+      font-size: 0.85rem;
+    }
+
+    .turn {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .bubble {
+      padding: 9px 13px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      max-width: 90%;
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+    }
+
+    .bubble.agent {
+      align-self: flex-start;
+      background: var(--bg-surface-1);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-primary);
+    }
+
+    .llm-line {
+      align-self: flex-start;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .llm-badge {
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-2);
+      color: var(--text-secondary);
+    }
+
+    .llm-badge.cachehit {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      font-weight: 600;
+    }
+
+    .arms-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .arm-col {
+      background: var(--bg-surface-0);
+      border: 1px solid var(--border-hairline);
+      border-radius: 12px;
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .arm-col h3 {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-white);
+      letter-spacing: -0.02em;
+    }
+
+    .arm-col .sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .arm-row {
+      background: var(--bg-surface-1);
+      border: 1px solid var(--border-hairline);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .arm-row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .kv label {
+      display: block;
+      font-size: 0.58rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+
+    .kv b {
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      color: var(--text-white);
+      font-weight: 600;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .chip {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.66rem;
+      font-family: var(--font-mono);
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface-2);
+      color: var(--text-muted);
+    }
+
+    .chip.hit {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      font-weight: 600;
+    }
+
+    .chip.live,
+    .chip.miss {
+      color: var(--text-secondary);
+    }
+
+    .fine {
+      font-size: 0.64rem;
+      font-family: var(--font-mono);
+      color: var(--text-faint);
+      line-height: 1.5;
+    }
+
+    .err {
+      color: #f4f4f5;
+      border: 1px dashed var(--border-focus);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.74rem;
+    }
+
+    .mini {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 3px 10px;
+      border-radius: 5px;
+      font-size: 0.68rem;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .mini:hover {
+      border-color: var(--border-focus);
+    }
+
+    .savings table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+    }
+
+    .savings th {
+      text-align: right;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-hairline);
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+    }
+
+    .savings th:first-child,
+    .savings td:first-child {
+      text-align: left;
+      font-family: var(--font-sans);
+    }
+
+    .savings td {
+      text-align: right;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+    }
+
+    .savings td.saved {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .bars {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .bar-pair {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 2px;
+      min-width: 2px;
+    }
+
+    .bar.on {
+      background: #fff;
+    }
+
+    .bar.off {
+      background: #52525b;
+    }
+
+    .legend {
+      display: flex;
+      gap: 14px;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .legend i {
+      display: inline-block;
+      width: 10px;
+      height: 8px;
+      border-radius: 2px;
+      margin-right: 5px;
+    }
+
+    .fineprint {
+      font-size: 0.68rem;
+      color: var(--text-faint);
+      line-height: 1.6;
+      margin-top: 0.8rem;
+    }
+
+    .notice {
+      display: none;
+      border: 1px solid var(--border-focus);
+      background: var(--bg-surface-2);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .dock-col {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .dock-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .guided {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .guided .lbl {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .gchip {
+      background: var(--bg-surface-1);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      cursor: pointer;
+      font-family: var(--font-inter);
+    }
+
+    .gchip:hover:not(:disabled) {
+      border-color: var(--border-focus);
+      color: var(--text-white);
+    }
+
+    .gchip.used {
+      color: var(--text-faint);
+    }
+
+    .gchip:disabled,
+    .primary-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .toggle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 880px) {
+      .sess-main {
+        padding: 1rem;
+      }
+
+      .arms-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kv {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body class="dark-theme">
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-mark"><span class="lightning-icon">⚡</span></div>
+      <div>
+        <h1 class="brand-title">Gnani Voice Gateway</h1>
+        <p class="brand-subtitle">Session demo: what the audio cache saves over a conversation</p>
+      </div>
+    </div>
+    <div class="header-center">
+      <nav class="nav-tabs">
+        <button class="nav-tab" onclick="location.href='/'">Split-Screen Demo</button>
+        <button class="nav-tab active">Session Demo</button>
+      </nav>
+    </div>
+    <div class="header-right"><span class="agent-badge" id="mode-badge">connecting</span></div>
+  </header>
+
+  <section class="metrics-ribbon">
+    <div class="ribbon-card">
+      <span class="ribbon-label">Characters Saved</span>
+      <div class="ribbon-val-group"><span id="r-chars" class="ribbon-value">0</span><span
+          class="ribbon-unit">chars</span></div>
+      <span class="ribbon-sub" id="r-chars-sub">not sent to TTS</span>
+    </div>
+    <div class="ribbon-card">
+      <span class="ribbon-label">Est. Credits Saved</span>
+      <div class="ribbon-val-group"><span id="r-credits" class="ribbon-value">0</span><span
+          class="ribbon-unit">credits</span></div>
+      <span class="ribbon-sub" id="r-credits-sub">estimate, see note below</span>
+    </div>
+    <div class="ribbon-card">
+      <span class="ribbon-label">TTS Calls Saved</span>
+      <div class="ribbon-val-group"><span id="r-calls" class="ribbon-value">0</span><span
+          class="ribbon-unit">calls</span></div>
+      <span class="ribbon-sub">clauses served from cache</span>
+    </div>
+    <div class="ribbon-card">
+      <span class="ribbon-label">Wait Saved</span>
+      <div class="ribbon-val-group"><span id="r-time" class="ribbon-value">0</span><span class="ribbon-unit">to first
+          sound</span></div>
+      <span class="ribbon-sub">cumulative over the session</span>
+    </div>
+  </section>
+
+  <main class="sess-main">
+    <p class="sess-intro">
+      Each message makes <b>one</b> LLM decision (cached or fresh). The <b>same reply text</b> then goes down two audio
+      paths: one with the TTS audio cache,
+      one that synthesizes every clause. This session's cache starts empty, so turn 1 is always a cold miss.
+    </p>
+    <div class="notice" id="notice"></div>
+
+    <section class="convo" id="convo"><span class="convo-empty">Pick a guided prompt below, or type your own.</span>
+    </section>
+
+    <section class="arms-grid">
+      <div class="arm-col">
+        <div>
+          <h3>TTS cache ON</h3>
+          <div class="sub">Clause lookup, tee-commit on a miss</div>
+        </div>
+        <div id="arm-cached"></div>
+      </div>
+      <div class="arm-col">
+        <div>
+          <h3>TTS cache OFF</h3>
+          <div class="sub">Every clause synthesized, nothing stored</div>
+        </div>
+        <div id="arm-uncached"></div>
+      </div>
+    </section>
+
+    <section class="dash-card savings" id="savings"></section>
+  </main>
+
+  <footer class="interaction-dock dock-col">
+    <div class="guided" id="guided"></div>
+    <div class="dock-row">
+      <input type="text" id="msg" class="main-text-input" placeholder="Type a message" autocomplete="off">
+      <label class="toggle"><input type="checkbox" id="autoplay" checked> Play cache-ON audio</label>
+      <button class="mic-btn" id="new-session" title="Start over with an empty cache">New session</button>
+      <button class="primary-btn" id="send"><span>Send</span><span class="btn-arrow">→</span></button>
+    </div>
+  </footer>
+
+  <script src="/static/session.js?v=1"></script>
+</body>
+
+</html>

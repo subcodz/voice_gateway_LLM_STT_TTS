@@ -34,6 +34,8 @@ from app.pipeline.baseline import BaselinePipeline
 from app.pipeline.gateway import GatewayPipeline
 from app.routing.intents import IntentCatalog
 from app.routing.router import Router
+from app import session_api
+from app.pipeline.session import SessionPipeline, SessionResponseCache, SessionStore
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -70,6 +72,7 @@ class AppState:
     session_spend: Dict[str, int] = defaultdict(int)
 
 state = AppState()
+app.include_router(session_api.router)
 
 
 @app.on_event("startup")
@@ -144,6 +147,27 @@ async def startup_event():
         version_tag=cfg.version_tag,
         finish_on_disconnect=cfg.finish_on_disconnect
     )
+
+    # Session demo: one LLM layer, two TTS paths, per-session cache namespace
+    state.session_store = SessionStore(
+        make_cache=lambda: SessionResponseCache(state.semantic_cache, threshold=cfg.session_semantic_threshold),
+        ttl_s=cfg.session_ttl_s,
+    )
+    state.session_pipeline = SessionPipeline(
+        llm_adapter=state.llm_adapter,
+        tts_adapter=state.tts_adapter,
+        audio_store=state.audio_store,
+        router=state.router,
+        voice_map=cfg.voice_map,
+        model=cfg.gnani_tts_model,
+        sample_rate=cfg.gnani_sample_rate,
+        version_tag=cfg.version_tag,
+        bucket="public_demo",
+        max_reply_chars=cfg.session_max_reply_chars,
+        chars_per_credit=cfg.measured_chars_per_credit,
+        max_turns=cfg.session_max_turns,
+    )
+    session_api.bind(state)
 
 
 def check_guardrails(ip: str, session_id: str, request_chars: int):
