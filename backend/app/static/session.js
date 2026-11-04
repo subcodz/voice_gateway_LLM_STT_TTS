@@ -317,20 +317,25 @@ function setBusy(b) {
 }
 
 function buildGuided() {
-  $("guided").innerHTML = `<span class="lbl">Guided path</span>` + GUIDED.map((g, i) =>
+  const el = $("guided");
+  if (!el) return;
+  el.innerHTML = `<span class="lbl">Guided path</span>` + GUIDED.map((g, i) =>
     `<button class="gchip" data-g="${i}" title="${esc(g.hint)}">${esc(g.label)}</button>`).join("");
 }
 
 function init() {
   buildGuided();
   render();
-  $("guided").addEventListener("click", (e) => {
-    const b = e.target.closest(".gchip");
-    if (!b || busy) return;
-    const i = Number(b.dataset.g);
-    usedGuided.add(i); b.classList.add("used");
-    sendTurn(GUIDED[i].text);
-  });
+  const guidedEl = $("guided");
+  if (guidedEl) {
+    guidedEl.addEventListener("click", (e) => {
+      const b = e.target.closest(".gchip");
+      if (!b || busy) return;
+      const i = Number(b.dataset.g);
+      usedGuided.add(i); b.classList.add("used");
+      sendTurn(GUIDED[i].text);
+    });
+  }
   $("send").addEventListener("click", () => sendTurn($("msg").value));
   $("msg").addEventListener("keydown", (e) => { if (e.key === "Enter") sendTurn($("msg").value); });
   $("new-session").addEventListener("click", () => { resetSession(); buildGuided(); });
