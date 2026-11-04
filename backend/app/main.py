@@ -88,6 +88,7 @@ async def startup_event():
     )
     state.singleflight = SingleFlight()
     state.semantic_cache = SemanticCache(threshold=cfg.semantic_threshold)
+    await asyncio.to_thread(state.semantic_cache.warmup)
 
     # Load intents and seed semantic cache
     state.intent_catalog = IntentCatalog(yaml_path="data/intents.yaml")
@@ -228,7 +229,8 @@ async def health():
     return {
         "status": "ok",
         "mock_apis": state.config.mock_apis,
-        "kill_switch": state.config.kill_switch
+        "kill_switch": state.config.kill_switch,
+        "embedder": state.semantic_cache.embedder_name,
     }
 
 

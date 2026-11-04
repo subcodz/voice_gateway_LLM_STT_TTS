@@ -258,7 +258,7 @@ class SessionPipeline:
             cacheable = decision != "personalized"
             if cacheable:
                 sp = tl.begin("llm_cache_lookup")
-                hit = session.cache.lookup(text, lang)
+                hit = await asyncio.to_thread(session.cache.lookup, text, lang)
                 tl.end(sp)
                 if hit:
                     reply, source, sim = hit
@@ -281,7 +281,7 @@ class SessionPipeline:
                 session.llm["calls"] += 1
                 reply = clip_reply(reply or "", self.max_reply_chars)
                 if reply and cacheable and llm_ok:
-                    session.cache.store(text, lang, reply)
+                    await asyncio.to_thread(session.cache.store, text, lang, reply)
                 source = "llm" if cacheable else "llm_uncacheable"
                 if not llm_ok:
                     source = "llm_failed"

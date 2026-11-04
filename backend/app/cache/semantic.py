@@ -9,6 +9,9 @@ factual correctness and zero data contamination between callers.
 
 import math
 from typing import Dict, List, Optional, Tuple
+import logging, os
+log = logging.getLogger("semantic")
+MODEL_NAME = os.getenv("EMBED_MODEL", "intfloat/multilingual-e5-small")
 
 
 def cosine_similarity(vec_a: List[float], vec_b: List[float]) -> float:
@@ -50,20 +53,30 @@ class SemanticCache:
 
     def _get_embedder(self):
         """Lazy loader for sentence embedder (multilingual-e5-small or fallback)."""
-        if self._embedder is None:
-            try:
-                import importlib
-                import importlib.util
-                if importlib.util.find_spec("sentence_transformers") is not None:
-                    st_mod = importlib.import_module("sentence_transformers")
-                    transformer_cls = getattr(st_mod, "SentenceTransformer")
-                    self._embedder = transformer_cls("intfloat/multilingual-e5-small")
-                else:
-                    self._embedder = "mock"
-            except Exception:
-                # Fast offline mock embedder for tests and lightweight environments
-                self._embedder = "mock"
+        if self._embedder is not None:
+            return self._embedder
+        mode = os.getenv("EMBEDDER", "auto")   # auto | real | mock
+        if mode == "mock":
+            self._embedder = "mock"
+            return self._embedder
+        try:
+            from sentence_transformers import SentenceTransformer
+            self._embedder = SentenceTransformer(MODEL_NAME, device="cpu")
+            log.info("Loaded embedder %s", MODEL_NAME)
+        except Exception:
+            if mode == "real":
+                raise                      # fail loudly, never degrade silently
+            log.exception("Real embedder failed to load, falling back to MOCK")
+            self._embedder = "mock"
         return self._embedder
+
+    @property
+    def embedder_name(self) -> str:
+        e = self._get_embedder()
+        return "mock" if e == "mock" else MODEL_NAME
+
+    def warmup(self) -> None:
+        self.embed_text("warmup")
 
     def embed_text(self, text: str, is_query: bool = True) -> List[float]:
         """Generates normalized vector embedding with query: or passage: prefix."""
