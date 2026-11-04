@@ -127,7 +127,7 @@ def _empty_arm_totals() -> Dict[str, float]:
     return {
         "turns": 0, "tts_calls": 0, "tts_chars": 0,
         "clauses": 0, "clause_hits": 0,
-        "first_playable_ms": 0.0, "total_ms": 0.0,
+        "first_playable_ms": 0.0, "total_ms": 0.0, "timed_turns": 0,
     }
 
 
@@ -311,13 +311,18 @@ class SessionPipeline:
 
         # ---- run both arms against the SAME t0
         out: asyncio.Queue = asyncio.Queue()
-        t0 = time.perf_counter()
-        tasks = [
-            asyncio.create_task(self._run_arm(arm, arm == "cached", session, clauses, voice, lang, t0, out))
-            for arm in ARMS
-        ]
+        # Alternate who goes first so connection-warmth bias cancels out over a session.
+        order = ARMS if turn_no % 2 == 1 else tuple(reversed(ARMS))
+
+        async def run_both() -> None:
+            for arm in order:
+                # Fresh t0 per arm: each arm is timed from its own start.
+                await self._run_arm(arm, arm == "cached", session, clauses, voice, lang,
+                                    time.perf_counter(), out)
+
+        tasks = [asyncio.create_task(run_both())]
         results: Dict[str, dict] = {}
-        pending = len(tasks)
+        pending = len(ARMS)   # one _ARM_FINISHED per arm
         try:
             while pending:
                 item = await out.get()
@@ -442,6 +447,12 @@ class SessionPipeline:
             summary["errors"] = {a: (results.get(a) or {}).get("error") for a in ARMS}
             return summary
 
+        noisy = bool(c["noisy"] or u["noisy"])
+        # Time is only comparable when the cache actually served something and
+        # retries did not distort the run. On a pure-miss turn both arms did the
+        # same work, so any gap is jitter.
+        timed = c["clause_hits"] > 0 and not noisy
+
         for arm, m in (("cached", c), ("uncached", u)):
             t = session.arms[arm]
             t["turns"] += 1
@@ -449,16 +460,18 @@ class SessionPipeline:
             t["tts_chars"] += m["tts_chars"]
             t["clauses"] += m["clauses"]
             t["clause_hits"] += m["clause_hits"]
-            t["first_playable_ms"] += m["first_playable_ms"] or 0.0
-            t["total_ms"] += m["total_ms"] or 0.0
+            if timed:
+                t["first_playable_ms"] += m["first_playable_ms"] or 0.0
+                t["total_ms"] += m["total_ms"] or 0.0
+                t["timed_turns"] += 1
 
         s = session.saved
         s["tts_chars"] += u["tts_chars"] - c["tts_chars"]
         s["tts_calls"] += u["tts_calls"] - c["tts_calls"]
-        s["first_playable_ms"] += (u["first_playable_ms"] or 0.0) - (c["first_playable_ms"] or 0.0)
-        s["total_ms"] += u["total_ms"] - c["total_ms"]
+        if timed:
+            s["first_playable_ms"] += max(0.0, (u["first_playable_ms"] or 0.0) - (c["first_playable_ms"] or 0.0))
+            s["total_ms"] += max(0.0, u["total_ms"] - c["total_ms"])
         s["compared_turns"] += 1
-        noisy = bool(c["noisy"] or u["noisy"])
         s["noisy_turns"] += 1 if noisy else 0
         summary.update({
             "compared": True, "noisy": noisy,

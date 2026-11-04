@@ -33,7 +33,12 @@ async def tee_stream(
         async for chunk in stream:
             accumulated.append(chunk)
             yield chunk
-        completed = True
+        full_audio = b"".join(accumulated)
+        if full_audio:
+            repaired = fix_wav_header(full_audio)
+            await asyncio.to_thread(cache_store.put, key, repaired)
+            if on_commit:
+                on_commit(key, repaired)
     except asyncio.CancelledError:
         if finish_on_disconnect:
             # Drain remaining chunks in background task to warm cache for followers
@@ -52,11 +57,3 @@ async def tee_stream(
 
             asyncio.create_task(_drain_and_cache(stream, accumulated))
         raise
-    finally:
-        if completed:
-            full_audio = b"".join(accumulated)
-            if full_audio:
-                repaired = fix_wav_header(full_audio)
-                cache_store.put(key, repaired)
-                if on_commit:
-                    on_commit(key, repaired)

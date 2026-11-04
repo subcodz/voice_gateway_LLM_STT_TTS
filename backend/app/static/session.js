@@ -9,11 +9,11 @@
 // Edit these to match data/intents.yaml. The path is: cold miss, different question,
 // exact repeat (normalizes to turn 1), paraphrase (needs the real embedder), new question.
 const GUIDED = [
-  { label: "1  Bill payment",   text: "How can I pay my electricity bill online?",           hint: "Cold: nothing cached yet" },
-  { label: "2  Office hours",   text: "What are the office hours?",                          hint: "Different question" },
-  { label: "3  Repeat of 1",    text: "how can i pay my electricity bill online",            hint: "Same query after normalization: exact hit" },
+  { label: "1  Bill payment", text: "How can I pay my electricity bill online?", hint: "Cold: nothing cached yet" },
+  { label: "2  Office hours", text: "What are the office hours?", hint: "Different question" },
+  { label: "3  Repeat of 1", text: "how can i pay my electricity bill online", hint: "Same query after normalization: exact hit" },
   { label: "4  Paraphrase of 1", text: "What are the ways to pay the electricity bill online?", hint: "Semantic hit if the similarity clears the threshold" },
-  { label: "5  New question",   text: "What should I do about voltage fluctuation?",         hint: "Miss on the LLM, partial reuse is possible" },
+  { label: "5  New question", text: "What should I do about voltage fluctuation?", hint: "Miss on the LLM, partial reuse is possible" },
 ];
 
 const $ = (id) => document.getElementById(id);
@@ -101,14 +101,14 @@ function onMessage(ev) {
   if (typeof ev.data !== "string") { onAudioBytes(new Uint8Array(ev.data)); return; }
   const m = JSON.parse(ev.data);
   switch (m.type) {
-    case "ready":       mock = m.mock; setMode(m.mock ? "mock APIs (no credits)" : "live Gnani"); break;
-    case "turn_start":  startTurn(m); break;
-    case "reply":       onReply(m); break;
-    case "audio":       pendingHdr = m; break;
+    case "ready": mock = m.mock; setMode(m.mock ? "mock APIs (no credits)" : "live Gnani"); break;
+    case "turn_start": startTurn(m); break;
+    case "reply": onReply(m); break;
+    case "audio": pendingHdr = m; break;
     case "clause_done": onClauseDone(m); break;
-    case "arm_done":    onArmDone(m); break;
-    case "turn_done":   onTurnDone(m); break;
-    case "cap":         notice(m.message); if (cur && !cur.reply) turns.pop(); finishTurn(); break;
+    case "arm_done": onArmDone(m); break;
+    case "turn_done": onTurnDone(m); break;
+    case "cap": notice(m.message); if (cur && !cur.reply) turns.pop(); finishTurn(); break;
     case "error":
       notice(m.message);
       if (cur && !cur.reply) { cur.reply = "No reply could be generated."; cur.source = ""; }
@@ -143,8 +143,10 @@ function resetSession() {
 function blankArm() { return { chunks: {}, clips: [], src: [], m: null, firstAudioClientMs: null }; }
 
 function startTurn(m) {
-  cur = { n: m.turn, text: m.text, reply: null, source: null, sim: 0, replyAt: null, replyReadyMs: 0,
-          cached: blankArm(), uncached: blankArm(), skipped: false, summary: null };
+  cur = {
+    n: m.turn, text: m.text, reply: null, source: null, sim: 0, replyAt: null, replyReadyMs: 0,
+    cached: blankArm(), uncached: blankArm(), skipped: false, summary: null
+  };
   turns.push(cur);
   player.stop();
   render();
@@ -252,6 +254,8 @@ function renderSavings() {
     return;
   }
   const on = snap.arms.cached, off = snap.arms.uncached, s = snap.saved, n = Math.max(1, on.turns);
+  const tn = Math.max(1, on.timed_turns);
+  const timeRow = on.timed_turns ? null : "--";
   const pct = (saved, base) => base > 0 ? ` (${Math.round((saved / base) * 100)}%)` : "";
   const avg = (o, k) => o[k] / Math.max(1, o.turns);
   const row = (name, a, b, c, cls = "saved") => `<tr><td>${name}</td><td>${a}</td><td>${b}</td><td class="${cls}">${c}</td></tr>`;
@@ -273,11 +277,11 @@ function renderSavings() {
         ${row("Characters sent to TTS", fmtNum(on.tts_chars), fmtNum(off.tts_chars), fmtNum(s.tts_chars) + pct(s.tts_chars, off.tts_chars))}
         ${row("Est. credits", on.est_credits.toFixed(2), off.est_credits.toFixed(2), s.est_credits.toFixed(2))}
         ${row("TTS calls", on.tts_calls, off.tts_calls, s.tts_calls + pct(s.tts_calls, off.tts_calls))}
-        ${row("Avg time to first sound", fmtMs(avg(on, "first_playable_ms")), fmtMs(avg(off, "first_playable_ms")), fmtMs(s.first_playable_ms / n))}
-        ${row("Avg time to full audio", fmtMs(avg(on, "total_ms")), fmtMs(avg(off, "total_ms")), fmtMs(s.total_ms / n))}
+        ${row("Avg time to first sound (hit turns only)", on.timed_turns ? fmtMs(on.first_playable_ms / tn) : "--", off.timed_turns ? fmtMs(off.first_playable_ms / tn) : "--", on.timed_turns ? fmtMs(s.first_playable_ms / tn) : "--")}
+        ${row("Avg time to full audio (hit turns only)", on.timed_turns ? fmtMs(on.total_ms / tn) : "--", off.timed_turns ? fmtMs(off.total_ms / tn) : "--", on.timed_turns ? fmtMs(s.total_ms / tn) : "--")}
         ${row("Audio clause hit rate", hitRate, "0%", "", "")}
         ${row("LLM layer", `${llm.calls} LLM call${llm.calls === 1 ? "" : "s"} in ${snap.turns} turns`,
-              "same text feeds both", `${llm.exact_hits} exact · ${llm.semantic_hits} semantic · ${llm.intent_hits} intent`, "")}
+    "same text feeds both", `${llm.exact_hits} exact · ${llm.semantic_hits} semantic · ${llm.intent_hits} intent`, "")}
       </tbody>
     </table>
     <div class="bars">${bars}</div>
