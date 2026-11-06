@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Voice Gateway | Session Demo</title>
+  <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -12,6 +13,18 @@
     rel="stylesheet">
   <link rel="stylesheet" href="/static/styles.css?v=20261029b">
   <style>
+    .logo-mark {
+      width: 62px;
+      height: 62px;
+    }
+
+    .logo-svg {
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+      display: block;
+    }
+
     .sess-main {
       display: flex;
       flex-direction: column;
@@ -422,9 +435,9 @@
 <body class="dark-theme">
   <header class="app-header">
     <div class="header-left">
-      <div class="logo-mark"><span class="lightning-icon">⚡</span></div>
+      <div class="logo-mark"><img src="/static/icon.svg" alt="CacheBuddy Icon" class="logo-svg"></div>
       <div>
-        <h1 class="brand-title">Gnani Voice Gateway</h1>
+        <h1 class="brand-title">CacheBuddy - Voice Gateway</h1>
         <p class="brand-subtitle">Session demo: what the audio cache saves over a conversation</p>
       </div>
       <div class="header-right"><span class="agent-badge" id="mode-badge">connecting</span></div>
