@@ -16,7 +16,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import session_api
@@ -136,7 +136,10 @@ if os.path.exists(static_dir):
 
 @app.get("/", include_in_schema=False)
 async def root():
-    """The session demo is the only view, so the root sends you straight to it."""
+    """Serves the main landing page for CacheBuddy."""
+    index_file = os.path.join(static_dir, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
     return RedirectResponse(url="/session")
 
 
