@@ -57,7 +57,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         />
 
         <div className="relative z-10 max-w-[1120px] mx-auto px-6">
-          <div className="inline-flex items-center gap-2 text-xs text-zinc-300 px-3.5 py-1.5 inset-shadow-lg inset-shadow-neutral-500 rounded-full mb-6 ">
+          <div className="inline-flex items-center gap-2 text-xs text-zinc-300 px-3.5 py-1.5 rounded-full mb-6 ">
             <span className="w-1.5 h-1.5 rounded-full bg-white inline-block" />
             Voice gateway for Hindi, Bengali and Hinglish
           </div>
@@ -73,13 +73,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           <div className="flex flex-wrap gap-3 justify-center mt-8">
             <button
               onClick={() => onNavigate('/session')}
-              className="px-5 py-2.5 rounded-lg inset-shadow-lg inset-shadow-neutral-900 bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-all flex items-center gap-2 "
+              className="px-5 py-2.5 rounded-lg bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition-all flex items-center gap-2 "
             >
               Try the session demo →
             </button>
             <a
               href="#architecture"
-              className="px-5 py-2.5 rounded-lg border border-white/20 inset-shadow-lg inset-shadow-blue-900 text-white font-medium text-sm hover:bg-white/10 transition-colors"
+              className="px-5 py-2.5 rounded-lg border border-white/20 inset-shadow-lg inset-shadow-white/20 text-white font-medium text-sm hover:bg-white/10 transition-colors"
             >
               Explore the architecture
             </a>
