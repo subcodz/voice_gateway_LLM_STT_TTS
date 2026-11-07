@@ -129,6 +129,10 @@ app.add_middleware(
 
 app.include_router(session_api.router)  # GET /session and WS /ws/session
 
+frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
+if os.path.exists(os.path.join(frontend_dist, "assets")):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
@@ -137,6 +141,9 @@ if os.path.exists(static_dir):
 @app.get("/", include_in_schema=False)
 async def root():
     """Serves the main landing page for CacheBuddy."""
+    dist_index = os.path.join(frontend_dist, "index.html")
+    if os.path.exists(dist_index):
+        return FileResponse(dist_index)
     index_file = os.path.join(static_dir, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)

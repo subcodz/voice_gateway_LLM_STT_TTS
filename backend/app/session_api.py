@@ -34,6 +34,7 @@ _state = None
 _ip_spend = defaultdict(lambda: {"date": "", "chars": 0})
 _VALID_LANGS = {"hi-IN", "bn-IN", "hi-en"}
 _STATIC = os.path.join(os.path.dirname(__file__), "static")
+_FRONTEND_DIST = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
 
 
 def bind(state) -> None:
@@ -44,6 +45,9 @@ def bind(state) -> None:
 
 @router.get("/session")
 async def session_page():
+    dist_index = os.path.join(_FRONTEND_DIST, "index.html")
+    if os.path.exists(dist_index):
+        return FileResponse(dist_index)
     return FileResponse(os.path.join(_STATIC, "session.html"))
 
 
