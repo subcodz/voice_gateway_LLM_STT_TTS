@@ -46,7 +46,7 @@ export const TurnSimulation: React.FC = () => {
   const curQ = QUERIES[queryIndex];
 
   return (
-    <div className="shiny-card p-6 rounded-2xl max-w-[820px] mx-auto text-left shadow-2xl">
+    <div className="shiny-card p-6 rounded-2xl max-w-[820px] mx-auto text-left  shadow-2xl">
       <div className="flex justify-between items-center text-xs text-zinc-400 font-mono mb-4 pb-2 border-b border-white/[0.08]">
         <span className="flex items-center gap-2">
           Turns cached
@@ -73,7 +73,7 @@ export const TurnSimulation: React.FC = () => {
         })}
       </div>
 
-      <div className="mt-4 p-3.5 rounded-xl bg-zinc-900/80 border border-white/[0.08] text-sm flex flex-wrap justify-between items-center gap-2">
+      <div className="mt-4 p-3.5 rounded-xl bg-zinc-900/80 border border-white/[0.08] inset-shadow-lg inset-shadow-white/10 text-sm flex flex-wrap justify-between items-center gap-2">
         <span className="text-zinc-200">{curQ.q}</span>
         <em className="not-italic text-xs font-mono bg-white text-black px-2.5 py-1 rounded font-semibold">
           {curQ.route} · {curQ.speed}

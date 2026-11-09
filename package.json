@@ -1,0 +1,13 @@
+{
+  "name": "cachebuddy-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Voice Gateway with intelligent audio caching for Indic languages",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run dev",
+    "preview": "npm --prefix frontend run preview"
+  }
+}
+

@@ -80,7 +80,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, statusB
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub Repository"
-            className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center justify-center"
+            className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center hover:inset-shadow-md inset-shadow-white/20 justify-center"
           >
             <svg
               className="w-5 h-5 fill-current"

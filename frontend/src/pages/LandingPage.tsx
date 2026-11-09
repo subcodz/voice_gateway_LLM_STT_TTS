@@ -175,12 +175,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                   {Array.from({ length: 10 }).map((_, i) => (
                     <span
                       key={i}
-                      className={`w-3.5 h-3.5 rounded transition-all duration-300 ${i < callerCount ? 'bg-white scale-105' : 'bg-zinc-800'
+                      className={`w-3.5 h-3.5 rounded transition-all duration-300 ${i < callerCount ? 'bg-white scale-105' : 'bg-zinc-800 inset-shadow-sm inset-shadow-white/20'
                         }`}
                     />
                   ))}
                 </div>
-                <div className="text-xs font-mono px-3 py-1.5 rounded-lg border border-white/10 bg-zinc-900 inline-block text-zinc-300">
+                <div className="text-xs font-mono px-3 py-1.5 rounded-lg border border-white/10 bg-zinc-900 inset-shadow-md inset-shadow-white/10  inline-block text-zinc-300">
                   Callers: {callerCount} · TTS calls: 1
                 </div>
               </div>
@@ -195,7 +195,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-zinc-900/90 border border-white/10 flex justify-between items-center text-xs">
+              <div className="p-3 rounded-xl bg-zinc-900/90 border border-white/10 inset-shadow-md inset-shadow-white/10 flex justify-between items-center text-xs">
                 <span className="text-zinc-200">{curGuard.text}</span>
                 <span className="font-mono text-[11px] bg-white text-black px-2 py-0.5 rounded font-semibold">
                   {curGuard.route}
