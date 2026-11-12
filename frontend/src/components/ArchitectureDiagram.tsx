@@ -76,9 +76,7 @@ const EDGES: [number, number, number, number][] = [
   [200, 198, 170, 198], [455, 226, 455, 310]
 ];
 
-const BASE_W = 920;
-const BASE_H = 380;
-const ZOOM_FACTOR = 1.55;
+const ZOOM_HEIGHT = 280; // Deep zoom fitting the whole card (~2.8x magnification)
 
 // Cubic bezier evaluator for smooth cinematics
 function cubicBezier(p1x: number, p1y: number, p2x: number, p2y: number) {
@@ -100,31 +98,57 @@ const easeInOutCubic = cubicBezier(0.4, 0.0, 0.2, 1.0);
 
 export const ArchitectureDiagram: React.FC = () => {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
-  const [viewBox, setViewBox] = useState<{ x: number; y: number; w: number; h: number }>({
-    x: 0,
-    y: 0,
-    w: BASE_W,
-    h: BASE_H,
-  });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [aspect, setAspect] = useState<number>(640 / 380);
 
+  // Measure card aspect ratio dynamically to ensure 100% full-bleed coverage
+  useEffect(() => {
+    const updateAspect = () => {
+      if (cardRef.current) {
+        const w = cardRef.current.clientWidth || 640;
+        const h = cardRef.current.clientHeight || 380;
+        setAspect(w / h);
+      }
+    };
+    updateAspect();
+    window.addEventListener('resize', updateAspect);
+    return () => window.removeEventListener('resize', updateAspect);
+  }, []);
+
+  // Compute idle viewBox matching container aspect ratio so it fills 100% of card
+  const getIdleViewBox = (ratio: number) => {
+    const w = 940;
+    const h = w / ratio;
+    const x = -10;
+    const y = 190 - h / 2;
+    return { x, y, w, h };
+  };
+
+  const [viewBox, setViewBox] = useState<{ x: number; y: number; w: number; h: number }>(() => getIdleViewBox(aspect));
   const animRef = useRef<number | null>(null);
-  const currentVb = useRef({ x: 0, y: 0, w: BASE_W, h: BASE_H });
+  const currentVb = useRef(getIdleViewBox(aspect));
   const hoverTimer = useRef<number | null>(null);
 
   useEffect(() => {
     let targetX = 0;
     let targetY = 0;
-    let targetW = BASE_W;
-    let targetH = BASE_H;
+    let targetW = 0;
+    let targetH = 0;
 
     if (activeIdx !== null) {
       const n = NODES[activeIdx];
-      targetW = BASE_W / ZOOM_FACTOR;
-      targetH = BASE_H / ZOOM_FACTOR;
+      targetH = ZOOM_HEIGHT;
+      targetW = targetH * aspect;
       const cx = n.x + 75;
       const cy = n.y + 28;
-      targetX = Math.max(0, Math.min(BASE_W - targetW, cx - targetW / 2));
-      targetY = Math.max(0, Math.min(BASE_H - targetH, cy - targetH / 2));
+      targetX = cx - targetW / 2;
+      targetY = cy - targetH / 2;
+    } else {
+      const idle = getIdleViewBox(aspect);
+      targetX = idle.x;
+      targetY = idle.y;
+      targetW = idle.w;
+      targetH = idle.h;
     }
 
     const startX = currentVb.current.x;
@@ -132,7 +156,7 @@ export const ArchitectureDiagram: React.FC = () => {
     const startW = currentVb.current.w;
     const startH = currentVb.current.h;
     const startTime = performance.now();
-    const duration = 550; // smooth 650ms glide
+    const duration = 650; // smooth 520ms glide
 
     const animate = (now: number) => {
       const elapsed = now - startTime;
@@ -164,7 +188,7 @@ export const ArchitectureDiagram: React.FC = () => {
         cancelAnimationFrame(animRef.current);
       }
     };
-  }, [activeIdx]);
+  }, [activeIdx, aspect]);
 
   const handleMouseEnter = (idx: number) => {
     if (hoverTimer.current) {
@@ -172,7 +196,7 @@ export const ArchitectureDiagram: React.FC = () => {
     }
     hoverTimer.current = window.setTimeout(() => {
       setActiveIdx(idx);
-    }, 50);
+    }, 40);
   };
 
   const handleClick = (idx: number) => {
@@ -188,21 +212,23 @@ export const ArchitectureDiagram: React.FC = () => {
     }
     hoverTimer.current = window.setTimeout(() => {
       setActiveIdx(null);
-    }, 80);
+    }, 70);
   };
 
   const activeNode = activeIdx !== null ? NODES[activeIdx] : null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-5 items-stretch mt-10">
-      {/* Fixed size diagram card - acts as viewport for camera */}
+      {/* Fixed size diagram card - full-bleed viewport filling the whole card */}
       <div
-        className="shiny-card rounded-2xl p-4 flex items-center justify-center min-h-[380px] max-h-[380px] h-[380px] overflow-hidden relative select-none"
+        ref={cardRef}
+        className="shiny-card rounded-2xl p-0 flex items-center justify-center min-h-[380px] max-h-[380px] h-[380px] overflow-hidden relative select-none"
         onMouseLeave={handleMouseLeave}
       >
         <svg
           viewBox={`${viewBox.x.toFixed(2)} ${viewBox.y.toFixed(2)} ${viewBox.w.toFixed(2)} ${viewBox.h.toFixed(2)}`}
-          className="w-full h-auto block select-none pointer-events-auto"
+          className="w-full h-full block select-none pointer-events-auto"
+          preserveAspectRatio="xMidYMid slice"
           role="img"
           aria-label="CacheBuddy architecture flow"
           textRendering="geometricPrecision"
